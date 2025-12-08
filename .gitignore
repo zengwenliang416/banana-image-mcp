@@ -76,3 +76,7 @@ blog/
 specs/
 
 .playwright-mcp/
+.claude
+.serena
+.kiro
+.hypothesis

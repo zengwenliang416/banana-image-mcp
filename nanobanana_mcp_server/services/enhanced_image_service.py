@@ -6,22 +6,24 @@ Implements the complete workflow sequences:
 2. Editing: M->F->G->FS->F->D (get file, edit, save, upload new, track with parent_file_id)
 """
 
-from typing import List, Optional, Tuple, Dict, Any
-from fastmcp.utilities.types import Image as MCPImage
-from .gemini_client import GeminiClient
-from .files_api_service import FilesAPIService
-from .image_database_service import ImageDatabaseService
-from ..utils.image_utils import create_thumbnail, validate_image_format
-from ..config.settings import GeminiConfig
-from ..config.constants import THUMBNAIL_SIZE, TEMP_FILE_SUFFIX
-from PIL import Image as PILImage
-import os
-import logging
-import mimetypes
 import base64
 from datetime import datetime
 import hashlib
 from io import BytesIO
+import logging
+import mimetypes
+import os
+from typing import Any
+
+from fastmcp.utilities.types import Image as MCPImage
+from PIL import Image as PILImage
+
+from ..config.constants import TEMP_FILE_SUFFIX, THUMBNAIL_SIZE
+from ..config.settings import GeminiConfig
+from ..utils.image_utils import create_thumbnail, validate_image_format
+from .files_api_service import FilesAPIService
+from .gemini_client import GeminiClient
+from .image_database_service import ImageDatabaseService
 
 
 class EnhancedImageService:
@@ -41,7 +43,7 @@ class EnhancedImageService:
         files_api_service: FilesAPIService,
         db_service: ImageDatabaseService,
         config: GeminiConfig,
-        out_dir: Optional[str] = None,
+        out_dir: str | None = None,
     ):
         """
         Initialize enhanced image service.
@@ -67,11 +69,11 @@ class EnhancedImageService:
         self,
         prompt: str,
         n: int = 1,
-        negative_prompt: Optional[str] = None,
-        system_instruction: Optional[str] = None,
-        input_images: Optional[List[Tuple[str, str]]] = None,
-        aspect_ratio: Optional[str] = None,
-    ) -> Tuple[List[MCPImage], List[Dict[str, Any]]]:
+        negative_prompt: str | None = None,
+        system_instruction: str | None = None,
+        input_images: list[tuple[str, str]] | None = None,
+        aspect_ratio: str | None = None,
+    ) -> tuple[list[MCPImage], list[dict[str, Any]]]:
         """
         Generate images following the complete workflow from workflows.md.
 
@@ -112,7 +114,7 @@ class EnhancedImageService:
 
             # Add input images if provided
             if input_images:
-                images_b64, mime_types = zip(*input_images)
+                images_b64, mime_types = zip(*input_images, strict=False)
                 image_parts = self.gemini_client.create_image_parts(
                     list(images_b64), list(mime_types)
                 )
@@ -161,7 +163,7 @@ class EnhancedImageService:
 
     def edit_image_by_file_id(
         self, file_id: str, edit_prompt: str
-    ) -> Tuple[List[MCPImage], List[Dict[str, Any]]]:
+    ) -> tuple[list[MCPImage], list[dict[str, Any]]]:
         """
         Edit image by file_id following workflows.md pattern.
 
@@ -226,7 +228,7 @@ class EnhancedImageService:
 
     def edit_image_by_path(
         self, instruction: str, file_path: str
-    ) -> Tuple[List[MCPImage], List[Dict[str, Any]]]:
+    ) -> tuple[list[MCPImage], list[dict[str, Any]]]:
         """
         Edit image from local file path following workflows.md pattern for path-based editing.
 
@@ -266,7 +268,7 @@ class EnhancedImageService:
 
             # Create parts for Gemini API
             image_parts = self.gemini_client.create_image_parts([base_image_b64], [mime_type])
-            contents = image_parts + [instruction]
+            contents = [*image_parts, instruction]
 
             # Generate edited image
             response = self.gemini_client.generate_content(contents)
@@ -307,10 +309,10 @@ class EnhancedImageService:
         response_index: int,
         image_index: int,
         prompt: str,
-        negative_prompt: Optional[str],
-        system_instruction: Optional[str],
-        aspect_ratio: Optional[str],
-    ) -> Tuple[MCPImage, Dict[str, Any]]:
+        negative_prompt: str | None,
+        system_instruction: str | None,
+        aspect_ratio: str | None,
+    ) -> tuple[MCPImage, dict[str, Any]]:
         """
         Process a generated image through the complete workflow.
 
@@ -322,10 +324,10 @@ class EnhancedImageService:
         filename = f"gen_{timestamp}_{response_index}_{image_index}_{image_hash}"
 
         full_path = os.path.join(self.out_dir, f"{filename}.{self.config.default_image_format}")
-        
+
         # Ensure output directory exists
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
-        
+
         # Write image file atomically using temporary file
         temp_path = f"{full_path}{TEMP_FILE_SUFFIX}"
         try:
@@ -406,8 +408,8 @@ class EnhancedImageService:
         return thumbnail_image, metadata
 
     def _process_edited_image(
-        self, image_bytes: bytes, instruction: str, parent_file_id: Optional[str], edit_index: int
-    ) -> Tuple[MCPImage, Dict[str, Any]]:
+        self, image_bytes: bytes, instruction: str, parent_file_id: str | None, edit_index: int
+    ) -> tuple[MCPImage, dict[str, Any]]:
         """
         Process an edited image through the complete workflow.
 

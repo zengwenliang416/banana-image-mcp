@@ -8,13 +8,13 @@ This module tests the aspect ratio feature added in PR #3, including:
 - Edge cases
 """
 
-import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
+
 from google.genai import types as gx
+import pytest
 
+from nanobanana_mcp_server.config.settings import GeminiConfig, ServerConfig
 from nanobanana_mcp_server.services.gemini_client import GeminiClient
-from nanobanana_mcp_server.config.settings import ServerConfig, GeminiConfig
-
 
 # Supported aspect ratios according to Gemini API docs
 SUPPORTED_ASPECT_RATIOS = [
@@ -35,8 +35,9 @@ class TestAspectRatioValidation:
 
     def test_aspect_ratio_literal_type_constraint(self):
         """Verify the tool parameter uses Literal type for type safety."""
-        from nanobanana_mcp_server.tools.generate_image import register_generate_image_tool
         from fastmcp import FastMCP
+
+        from nanobanana_mcp_server.tools.generate_image import register_generate_image_tool
 
         # This test ensures the Literal constraint is in place
         # If it's not, the type system won't catch invalid values
@@ -49,7 +50,7 @@ class TestAspectRatioValidation:
         # Check that aspect_ratio parameter exists
         import inspect
         sig = inspect.signature(tool_func.fn)
-        assert 'aspect_ratio' in sig.parameters
+        assert "aspect_ratio" in sig.parameters
 
 
 class TestGeminiClientAspectRatio:
@@ -77,7 +78,7 @@ class TestGeminiClientAspectRatio:
 
     def test_aspect_ratio_creates_image_config(self, gemini_client):
         """Test that aspect_ratio parameter creates ImageConfig."""
-        with patch('nanobanana_mcp_server.services.gemini_client.gx') as mock_gx:
+        with patch("nanobanana_mcp_server.services.gemini_client.gx") as mock_gx:
             # Setup mocks
             mock_image_config = Mock()
             mock_gx.ImageConfig.return_value = mock_image_config
@@ -94,7 +95,7 @@ class TestGeminiClientAspectRatio:
 
     def test_aspect_ratio_none_skips_image_config(self, gemini_client):
         """Test that aspect_ratio=None doesn't create ImageConfig."""
-        with patch('nanobanana_mcp_server.services.gemini_client.gx') as mock_gx:
+        with patch("nanobanana_mcp_server.services.gemini_client.gx") as mock_gx:
             mock_gx.GenerateContentConfig = Mock()
 
             # Call without aspect_ratio
@@ -122,7 +123,7 @@ class TestGeminiClientAspectRatio:
 
     def test_response_modalities_forced_to_image(self, gemini_client):
         """Test that response_modalities is always set to ['Image']."""
-        with patch('nanobanana_mcp_server.services.gemini_client.gx') as mock_gx:
+        with patch("nanobanana_mcp_server.services.gemini_client.gx") as mock_gx:
             mock_gx.ImageConfig = Mock()
             mock_gx.GenerateContentConfig = Mock()
 
@@ -133,7 +134,7 @@ class TestGeminiClientAspectRatio:
 
             # Check that GenerateContentConfig was called with response_modalities
             call_kwargs = mock_gx.GenerateContentConfig.call_args[1]
-            assert call_kwargs.get('response_modalities') == ['Image']
+            assert call_kwargs.get("response_modalities") == ["Image"]
 
 
 class TestAspectRatioMetadata:
@@ -217,28 +218,31 @@ class TestAspectRatioServicePropagation:
 
     def test_enhanced_image_service_accepts_aspect_ratio(self):
         """Test EnhancedImageService.generate_images accepts aspect_ratio."""
-        from nanobanana_mcp_server.services.enhanced_image_service import EnhancedImageService
         import inspect
+
+        from nanobanana_mcp_server.services.enhanced_image_service import EnhancedImageService
 
         # Check method signature
         sig = inspect.signature(EnhancedImageService.generate_images)
-        assert 'aspect_ratio' in sig.parameters
+        assert "aspect_ratio" in sig.parameters
 
     def test_file_image_service_accepts_aspect_ratio(self):
         """Test FileImageService.generate_images accepts aspect_ratio."""
-        from nanobanana_mcp_server.services.file_image_service import FileImageService
         import inspect
+
+        from nanobanana_mcp_server.services.file_image_service import FileImageService
 
         sig = inspect.signature(FileImageService.generate_images)
-        assert 'aspect_ratio' in sig.parameters
+        assert "aspect_ratio" in sig.parameters
 
-    def test_image_service_accepts_aspect_ratio(self):
-        """Test ImageService.generate_images accepts aspect_ratio."""
-        from nanobanana_mcp_server.services.image_service import ImageService
+    def test_flash_image_service_accepts_aspect_ratio_param(self):
+        """Test FlashImageService.generate_images accepts aspect_ratio."""
         import inspect
 
-        sig = inspect.signature(ImageService.generate_images)
-        assert 'aspect_ratio' in sig.parameters
+        from nanobanana_mcp_server.services.flash_image_service import FlashImageService
+
+        sig = inspect.signature(FlashImageService.generate_images)
+        assert "aspect_ratio" in sig.parameters
 
 
 # Test configuration

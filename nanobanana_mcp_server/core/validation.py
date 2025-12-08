@@ -1,7 +1,7 @@
 """Input validation utilities."""
 
-from typing import List, Optional
 import re
+
 from ..config.constants import SUPPORTED_IMAGE_TYPES
 from .exceptions import ValidationError
 
@@ -61,7 +61,7 @@ def validate_base64_image(image_b64: str) -> None:
 
 
 def validate_image_list_consistency(
-    images_b64: Optional[List[str]], mime_types: Optional[List[str]]
+    images_b64: list[str] | None, mime_types: list[str] | None
 ) -> None:
     """Validate that image lists are consistent."""
     if images_b64 is None and mime_types is None:
@@ -80,7 +80,7 @@ def validate_image_list_consistency(
         raise ValidationError("Maximum 4 input images allowed")
 
     # Validate each image and MIME type
-    for i, (img_b64, mime_type) in enumerate(zip(images_b64, mime_types)):
+    for i, (img_b64, mime_type) in enumerate(zip(images_b64, mime_types, strict=False)):
         try:
             validate_base64_image(img_b64)
             validate_image_format(mime_type)

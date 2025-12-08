@@ -1,8 +1,9 @@
-from typing import Tuple, Optional
 import base64
-from PIL import Image
 from io import BytesIO
 import logging
+
+from PIL import Image
+
 from ..config.constants import SUPPORTED_IMAGE_TYPES
 from ..core.exceptions import ImageProcessingError, ValidationError
 
@@ -12,7 +13,7 @@ def validate_image_format(mime_type: str) -> bool:
     return mime_type.lower() in SUPPORTED_IMAGE_TYPES
 
 
-def get_image_dimensions(image_b64: str) -> Tuple[int, int]:
+def get_image_dimensions(image_b64: str) -> tuple[int, int]:
     """Get image dimensions from base64 data."""
     try:
         image_data = base64.b64decode(image_b64)
@@ -147,7 +148,7 @@ def create_thumbnail(source_path: str, thumb_path: str, size: int = 256) -> None
         raise ImageProcessingError(f"Thumbnail creation failed: {e}")
 
 
-def create_thumbnail_base64(image_b64: str, size: Tuple[int, int] = (256, 256)) -> str:
+def create_thumbnail_base64(image_b64: str, size: tuple[int, int] = (256, 256)) -> str:
     """Create a thumbnail from base64 image data."""
     try:
         image_data = base64.b64decode(image_b64)
@@ -203,7 +204,7 @@ def validate_image_content(image_b64: str, mime_type: str) -> bool:
         return False
 
 
-def detect_image_type(image_b64: str) -> Optional[str]:
+def detect_image_type(image_b64: str) -> str | None:
     """Detect the actual image type from base64 data."""
     try:
         image_data = base64.b64decode(image_b64)

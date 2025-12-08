@@ -231,5 +231,6 @@ dev-dependencies = [
 [dependency-groups]
 dev = [
     "build>=1.3.0",
+    "hypothesis>=6.148.7",
     "twine>=6.1.0",
 ]
