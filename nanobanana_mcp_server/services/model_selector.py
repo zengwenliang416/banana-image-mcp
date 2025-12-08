@@ -3,8 +3,7 @@
 import logging
 
 from ..config.settings import ModelSelectionConfig, ModelTier
-from .image_service import ImageService
-from .pro_image_service import ProImageService
+from .base_image_service import BaseImageService
 
 
 class ModelSelector:
@@ -18,16 +17,16 @@ class ModelSelector:
 
     def __init__(
         self,
-        flash_service: ImageService,
-        pro_service: ProImageService,
-        selection_config: ModelSelectionConfig
+        flash_service: BaseImageService,
+        pro_service: BaseImageService,
+        selection_config: ModelSelectionConfig,
     ):
         """
         Initialize model selector.
 
         Args:
-            flash_service: Gemini 2.5 Flash Image service (speed-optimized)
-            pro_service: Gemini 3 Pro Image service (quality-optimized)
+            flash_service: Flash image service (speed-optimized, inherits BaseImageService)
+            pro_service: Pro image service (quality-optimized, inherits BaseImageService)
             selection_config: Selection strategy configuration
         """
         self.flash_service = flash_service
@@ -39,8 +38,8 @@ class ModelSelector:
         self,
         prompt: str,
         requested_tier: ModelTier | None = None,
-        **kwargs
-    ) -> tuple[ImageService | ProImageService, ModelTier]:
+        **kwargs,
+    ) -> tuple[BaseImageService, ModelTier]:
         """
         Select appropriate model based on requirements.
 

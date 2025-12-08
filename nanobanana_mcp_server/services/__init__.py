@@ -1,7 +1,6 @@
 """Service registry for dependency injection."""
 
 import os
-from typing import Optional
 
 from ..config.settings import (
     FlashImageConfig,
@@ -10,10 +9,12 @@ from ..config.settings import (
     ProImageConfig,
     ServerConfig,
 )
+from .base_image_service import BaseImageService
 from .enhanced_image_service import EnhancedImageService
 from .file_image_service import FileImageService
 from .file_service import FileService
 from .files_api_service import FilesAPIService
+from .flash_image_service import FlashImageService
 from .gemini_client import GeminiClient
 from .image_database_service import ImageDatabaseService
 from .image_storage_service import ImageStorageService
@@ -23,7 +24,8 @@ from .pro_image_service import ProImageService
 
 # Global service instances (initialized by the server)
 _gemini_client: GeminiClient | None = None
-_file_image_service: FileImageService | None = None
+_file_image_service: FileImageService | None = None  # Legacy compatibility
+_flash_image_service: FlashImageService | None = None  # New Flash service
 _file_service: FileService | None = None
 _enhanced_image_service: EnhancedImageService | None = None
 _files_api_service: FilesAPIService | None = None
@@ -43,6 +45,7 @@ def initialize_services(server_config: ServerConfig, gemini_config: GeminiConfig
     global \
         _gemini_client, \
         _file_image_service, \
+        _flash_image_service, \
         _file_service, \
         _enhanced_image_service, \
         _files_api_service, \
@@ -80,26 +83,40 @@ def initialize_services(server_config: ServerConfig, gemini_config: GeminiConfig
     _flash_gemini_client = GeminiClient(server_config, flash_config)
     _pro_gemini_client = GeminiClient(server_config, pro_config)
 
-    # Create Pro image service (Flash uses existing _file_image_service)
+    # Create new FlashImageService (inherits from BaseImageService)
+    _flash_image_service = FlashImageService(
+        _flash_gemini_client,
+        flash_config,
+        _image_storage_service,
+    )
+
+    # Create Pro image service (inherits from BaseImageService)
     _pro_image_service = ProImageService(
         _pro_gemini_client,
         pro_config,
-        _image_storage_service
+        _image_storage_service,
     )
 
-    # Create model selector
+    # Create model selector with new service classes
     _model_selector = ModelSelector(
-        _file_image_service,  # Flash service
-        _pro_image_service,   # Pro service
-        selection_config
+        _flash_image_service,  # Flash service (new)
+        _pro_image_service,    # Pro service
+        selection_config,
     )
 
 
-def get_image_service() -> FileImageService:
-    """Get the image service instance."""
-    if _file_image_service is None:
+def get_image_service() -> BaseImageService:
+    """Get the image service instance (Flash by default)."""
+    if _flash_image_service is None:
         raise RuntimeError("Services not initialized. Call initialize_services() first.")
-    return _file_image_service
+    return _flash_image_service
+
+
+def get_flash_image_service() -> FlashImageService:
+    """Get the Flash image service instance."""
+    if _flash_image_service is None:
+        raise RuntimeError("Services not initialized. Call initialize_services() first.")
+    return _flash_image_service
 
 
 def get_file_service() -> FileService:
