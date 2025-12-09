@@ -95,9 +95,7 @@ class TestGeminiClientAspectRatio:
 
         # Provide both config kwarg (as dict, not Mock) and aspect_ratio
         custom_config = {"temperature": 0.5}
-        gemini_client.generate_content(
-            contents=["test"], aspect_ratio="16:9", config=custom_config
-        )
+        gemini_client.generate_content(contents=["test"], aspect_ratio="16:9", config=custom_config)
 
         # The method should process without error when config is a dict
         # Note: warning behavior depends on internal implementation
