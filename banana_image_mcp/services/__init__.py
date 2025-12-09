@@ -62,19 +62,7 @@ def initialize_services(server_config: ServerConfig, gemini_config: GeminiConfig
     _file_image_service = FileImageService(_gemini_client, gemini_config, server_config)
     _file_service = FileService(_gemini_client)
 
-    # Initialize enhanced services for workflows.md implementation
-    out_dir = server_config.image_output_dir
-    _image_database_service = ImageDatabaseService(db_path=os.path.join(out_dir, "images.db"))
-    # Use a subdirectory within the configured output directory for temp images
-    temp_images_dir = os.path.join(out_dir, "temp_images")
-    _image_storage_service = ImageStorageService(gemini_config, temp_images_dir)
-    _files_api_service = FilesAPIService(_gemini_client, _image_database_service)
-    _enhanced_image_service = EnhancedImageService(
-        _gemini_client, _files_api_service, _image_database_service, gemini_config, out_dir
-    )
-    _maintenance_service = MaintenanceService(_files_api_service, _image_database_service, out_dir)
-
-    # Initialize multi-model support services
+    # Initialize multi-model support services (must be before EnhancedImageService)
     flash_config = FlashImageConfig()
     pro_config = ProImageConfig()
     selection_config = ModelSelectionConfig.from_env()
@@ -82,6 +70,19 @@ def initialize_services(server_config: ServerConfig, gemini_config: GeminiConfig
     # Create separate Gemini clients for each model
     _flash_gemini_client = GeminiClient(server_config, flash_config)
     _pro_gemini_client = GeminiClient(server_config, pro_config)
+
+    # Initialize enhanced services for workflows.md implementation
+    # Use Pro client by default for 4K support
+    out_dir = server_config.image_output_dir
+    _image_database_service = ImageDatabaseService(db_path=os.path.join(out_dir, "images.db"))
+    # Use a subdirectory within the configured output directory for temp images
+    temp_images_dir = os.path.join(out_dir, "temp_images")
+    _image_storage_service = ImageStorageService(gemini_config, temp_images_dir)
+    _files_api_service = FilesAPIService(_pro_gemini_client, _image_database_service)
+    _enhanced_image_service = EnhancedImageService(
+        _pro_gemini_client, _files_api_service, _image_database_service, gemini_config, out_dir
+    )
+    _maintenance_service = MaintenanceService(_files_api_service, _image_database_service, out_dir)
 
     # Create new FlashImageService (inherits from BaseImageService)
     _flash_image_service = FlashImageService(

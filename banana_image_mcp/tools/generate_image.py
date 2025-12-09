@@ -75,16 +75,16 @@ def register_generate_image_tool(server: FastMCP):
             str | None,
             Field(
                 description="Model tier: 'flash' (speed, 1024px), 'pro' (quality, up to 4K), or 'auto' (smart selection). "
-                "Default: 'auto' - automatically selects based on prompt quality/speed indicators."
+                "Default: 'pro' - uses Pro model for best quality."
             ),
-        ] = "auto",
+        ] = "pro",
         resolution: Annotated[
             str | None,
             Field(
-                description="Output resolution: 'high', '4k', '2k', '1k'. "
-                "4K and 2K only available with 'pro' model. Default: 'high'."
+                description="Output resolution: '4k', '2k', '1k', 'high'. "
+                "4K is default for Pro model. Use 'flash' model_tier for faster 1K outputs."
             ),
-        ] = "high",
+        ] = "4k",
         thinking_level: Annotated[
             str | None,
             Field(
@@ -214,6 +214,7 @@ def register_generate_image_tool(server: FastMCP):
                     system_instruction=system_instruction,
                     input_images=input_images,
                     aspect_ratio=aspect_ratio,
+                    resolution=resolution,
                 )
 
             # Create response with file paths and thumbnails

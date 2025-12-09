@@ -105,7 +105,7 @@ class ProImageConfig(BaseModelConfig):
 @dataclass
 class ModelSelectionConfig:
     """Configuration for intelligent model selection."""
-    default_tier: ModelTier = ModelTier.AUTO
+    default_tier: ModelTier = ModelTier.PRO
     auto_quality_keywords: list[str] = field(default_factory=lambda: [
         "4k", "high quality", "professional", "production",
         "high-res", "high resolution", "detailed", "sharp", "crisp",
