@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <!-- 香蕉渐变 -->
+    <linearGradient id="bananaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE135"/>
+      <stop offset="50%" style="stop-color:#FFD700"/>
+      <stop offset="100%" style="stop-color:#F4C430"/>
+    </linearGradient>
+    <!-- 画笔渐变 -->
+    <linearGradient id="brushGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8B4513"/>
+      <stop offset="100%" style="stop-color:#A0522D"/>
+    </linearGradient>
+    <!-- 背景渐变 -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <!-- 发光效果 -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 圆角背景 -->
+  <rect x="0" y="0" width="120" height="120" rx="24" ry="24" fill="url(#bgGrad)"/>
+
+  <!-- 装饰性圆环 -->
+  <circle cx="60" cy="60" r="50" fill="none" stroke="#FFE135" stroke-width="1" opacity="0.2"/>
+  <circle cx="60" cy="60" r="42" fill="none" stroke="#FFE135" stroke-width="0.5" opacity="0.1"/>
+
+  <!-- 香蕉主体 -->
+  <g transform="translate(60, 60) rotate(-30)">
+    <!-- 香蕉身体 -->
+    <path d="M-8,-35
+             Q-20,-25 -22,0
+             Q-20,25 -5,38
+             Q5,42 12,38
+             Q20,30 18,5
+             Q15,-20 5,-33
+             Q0,-38 -8,-35Z"
+          fill="url(#bananaGrad)"
+          stroke="#DAA520"
+          stroke-width="1"
+          filter="url(#glow)"/>
+
+    <!-- 香蕉高光 -->
+    <path d="M-5,-30
+             Q-12,-20 -14,0
+             Q-12,15 -2,28"
+          fill="none"
+          stroke="#FFF8DC"
+          stroke-width="3"
+          stroke-linecap="round"
+          opacity="0.4"/>
+
+    <!-- 香蕉顶部 -->
+    <ellipse cx="-2" cy="-36" rx="6" ry="3" fill="#8B7355"/>
+
+    <!-- 香蕉底部 -->
+    <path d="M3,40 Q8,44 6,48 Q4,50 2,48 Q-2,44 3,40Z" fill="#5D4E37"/>
+  </g>
+
+  <!-- 画笔 -->
+  <g transform="translate(75, 75) rotate(45)">
+    <!-- 画笔柄 -->
+    <rect x="-4" y="-30" width="8" height="25" rx="1" fill="url(#brushGrad)"/>
+
+    <!-- 金属箍 -->
+    <rect x="-5" y="-8" width="10" height="6" rx="1" fill="#C0C0C0"/>
+    <rect x="-5" y="-6" width="10" height="1" fill="#A8A8A8"/>
+
+    <!-- 画笔毛 -->
+    <path d="M-4,-2 Q-5,8 0,14 Q5,8 4,-2Z" fill="#4169E1"/>
+    <path d="M-2,-2 Q-3,6 0,11 Q3,6 2,-2Z" fill="#6495ED"/>
+
+    <!-- 颜料滴 -->
+    <circle cx="0" cy="16" r="3" fill="#FF6B6B" opacity="0.9"/>
+    <circle cx="-8" cy="12" r="2" fill="#4ECDC4" opacity="0.8"/>
+    <circle cx="7" cy="10" r="2" fill="#FFE66D" opacity="0.8"/>
+  </g>
+
+  <!-- AI 光点装饰 -->
+  <circle cx="25" cy="30" r="2" fill="#4ECDC4" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="95" cy="35" r="1.5" fill="#FF6B6B" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="30" cy="95" r="1.5" fill="#FFE66D" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.4;0.7" dur="1.8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- 底部 MCP 文字 -->
+  <text x="60" y="112" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#FFE135" opacity="0.8">MCP</text>
+</svg>

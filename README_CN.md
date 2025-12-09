@@ -1,49 +1,142 @@
-# Banana Image MCP
+<a id="readme-top"></a>
 
+<!-- PROJECT SHIELDS -->
 <div align="center">
 
-<img src="https://img.shields.io/badge/MCP-AI%20%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90-ff6b6b?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yMSAxOVY1YzAtMS4xLS45LTItMi0ySDVjLTEuMSAwLTIgLjktMiAydjE0YzAgMS4xLjkgMiAyIDJoMTRjMS4xIDAgMi0uOSAyLTJ6TTguNSAxMy41bDIuNSAzLjAxTDE0LjUgMTJsNC41IDZINWwzLjUtNC41eiIvPjwvc3ZnPg==" alt="MCP AI 图像生成">
-
-### 让 Claude 为你生成精美图片
-
-[![PyPI version](https://img.shields.io/pypi/v/banana-image-mcp?style=flat-square&color=blue)](https://pypi.org/project/banana-image-mcp/)
-[![Downloads](https://img.shields.io/pypi/dm/banana-image-mcp?style=flat-square&color=green)](https://pypi.org/project/banana-image-mcp/)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg?style=flat-square)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-
-[English](./README.md) | [问题反馈](https://github.com/zengwenliang416/banana-image-mcp/issues)
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![PyPI version][pypi-shield]][pypi-url]
+[![Downloads][downloads-shield]][pypi-url]
 
 </div>
 
----
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/zengwenliang416/banana-image-mcp">
+    <img src="./assets/logo.svg" alt="Logo" width="120" height="120">
+  </a>
 
-## 这是什么？
+  <h1 align="center">Banana Image MCP</h1>
 
-**Banana Image MCP** 是一个 MCP（模型上下文协议）服务器，让 Claude 和其他 AI 助手能够使用 Google 最新的 Gemini 图像模型生成高质量图片。
+  <p align="center">
+    <b>让 Claude 为你生成精美的 4K 图片</b>
+    <br />
+    为 Claude Desktop 带来 AI 图像生成能力的 MCP 服务器
+    <br />
+    <br />
+    <a href="#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B"><strong>快速开始</strong></a>
+    &nbsp;&middot;&nbsp;
+    <a href="https://github.com/zengwenliang416/banana-image-mcp/issues/new?labels=bug">报告问题</a>
+    &nbsp;&middot;&nbsp;
+    <a href="https://github.com/zengwenliang416/banana-image-mcp/issues/new?labels=enhancement">功能建议</a>
+  </p>
+
+  <p align="center">
+    <a href="./README.md">English</a>
+  </p>
+</div>
+
+<!-- DEMO GIF -->
+<div align="center">
+  <img src="./assets/demo.gif" alt="Demo" width="700">
+</div>
+
+<br />
+
+<!-- ABOUT THE PROJECT -->
+## 关于项目
+
+**Banana Image MCP** 是一个生产就绪的 [MCP（模型上下文协议）](https://modelcontextprotocol.io/)服务器，让 Claude 和其他 AI 助手能够使用 Google 最新的 Gemini 图像模型生成高质量图片。
 
 只需描述你想要的内容，Claude 就会为你创建——从快速概念草图到令人惊艳的 **4K 专业级作品**。
 
+### 为什么选择 Banana Image MCP？
+
+- **零配置复杂度** — 添加 API Key 即可开始生成
+- **生产就绪** — 基于 FastMCP 框架构建，完整测试，CI/CD 支持
+- **最佳画质** — 使用 Gemini 最先进的图像模型，支持 4K 输出
+- **智能默认** — 根据提示词自动选择最佳模型
+- **真实世界知识** — Google 搜索增强，生成准确、真实的图像
+
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
+
+### 技术栈
+
+* [![Python][Python-badge]][Python-url]
+* [![FastMCP][FastMCP-badge]][FastMCP-url]
+* [![Google Gemini][Gemini-badge]][Gemini-url]
+* [![uv][uv-badge]][uv-url]
+
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
+
+<!-- FEATURES -->
 ## 核心功能
 
-| 功能 | 说明 |
-|------|------|
-| **4K 超高清** | Pro 模型支持最高 3840px 输出 |
-| **双模型支持** | Flash（快速，2-3秒）+ Pro（4K画质，5-8秒）|
-| **智能模型选择** | 根据提示词自动选择最佳模型 |
-| **Google 搜索增强** | Pro 模型利用真实世界知识提升准确性 |
-| **灵活宽高比** | 1:1、16:9、9:16、4:3、3:2、21:9 等多种比例 |
-| **图片编辑** | 使用自然语言编辑现有图片 |
-| **高级推理** | 可配置思考级别，优化复杂构图 |
+<table>
+<tr>
+<td width="50%">
 
+### 4K 超高清输出
+使用 Pro 模型生成高达 **3840px** 的图像。适合专业工作、营销素材和印刷品。
+
+</td>
+<td width="50%">
+
+### 双模型支持
+- **Flash**: 2-3秒，最高 1024px — 快速迭代
+- **Pro**: 5-8秒，最高 4K — 最终成品
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 智能模型选择
+服务器根据提示词自动选择最佳模型。说"快速草图"用 Flash，说"4K 专业"用 Pro。
+
+</td>
+<td width="50%">
+
+### Google 搜索增强
+Pro 模型使用来自 Google 搜索的真实世界知识，生成更准确、更真实的图像。
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 灵活宽高比
+支持所有常用比例：`1:1`、`16:9`、`9:16`、`4:3`、`3:2`、`21:9` 等。
+
+</td>
+<td width="50%">
+
+### 自然语言编辑
+使用简单的文字指令编辑现有图片，如"让天空更有戏剧性"或"移除背景"。
+
+</td>
+</tr>
+</table>
+
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
+
+<!-- GETTING STARTED -->
 ## 快速开始
 
-### 1. 获取 Gemini API Key
+2 分钟内完成配置。
 
-从 [Google AI Studio](https://aistudio.google.com/apikey) **免费**获取 API Key
+### 前置条件
 
-### 2. 安装配置
+* 从 [Google AI Studio](https://aistudio.google.com/apikey) **免费**获取 Gemini API Key
+* 已安装 [Claude Desktop](https://claude.ai/download)
 
-**Claude Desktop 用户**，编辑配置文件：
+### 安装配置
+
+**添加到 Claude Desktop 配置文件：**
 
 ```json
 {
@@ -60,7 +153,7 @@
 ```
 
 <details>
-<summary><strong>配置文件位置</strong></summary>
+<summary>📁 <b>配置文件位置</b></summary>
 
 | 平台 | 路径 |
 |------|------|
@@ -71,28 +164,7 @@
 </details>
 
 <details>
-<summary><strong>其他 MCP 客户端（Cursor、VS Code、Cline 等）</strong></summary>
-
-其他 MCP 兼容客户端的配置类似：
-
-```json
-{
-  "mcpServers": {
-    "banana-image": {
-      "command": "uvx",
-      "args": ["banana-image-mcp"],
-      "env": {
-        "GEMINI_API_KEY": "你的API密钥"
-      }
-    }
-  }
-}
-```
-
-</details>
-
-<details>
-<summary><strong>更新到最新版本</strong></summary>
+<summary>🔄 <b>更新到最新版本</b></summary>
 
 使用 `uvx` 时，包会被缓存到本地。要获取最新版本：
 
@@ -100,32 +172,32 @@
 # 清除该包的缓存
 uv cache clean banana-image-mcp
 
-# 然后重启 MCP 客户端（Claude Desktop 等）
+# 然后重启 Claude Desktop
 ```
 
-或者指定具体版本：
+或在配置中指定具体版本：
 
 ```json
-{
-  "mcpServers": {
-    "banana-image": {
-      "command": "uvx",
-      "args": ["banana-image-mcp==1.0.0"],
-      "env": {
-        "GEMINI_API_KEY": "你的API密钥"
-      }
-    }
-  }
-}
+"args": ["banana-image-mcp==1.0.1"]
 ```
 
 </details>
 
-### 3. 开始创作
+<details>
+<summary>🔌 <b>其他 MCP 客户端（Cursor、VS Code、Cline 等）</b></summary>
+
+其他 MCP 兼容客户端的配置相同。只需将服务器配置添加到客户端的 MCP 配置文件中。
+
+</details>
+
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
+
+<!-- USAGE EXAMPLES -->
+## 使用方式
 
 直接让 Claude 生成图片：
 
-```
+```text
 "生成一只穿着宇航服的可爱猫咪"
 
 "创建一张咖啡杯的专业产品照片，4K 画质"
@@ -135,16 +207,14 @@ uv cache clean banana-image-mcp
 "编辑这张图片：让天空更有戏剧性"
 ```
 
-## 模型对比
+### 模型对比
 
 | 模型 | 速度 | 最大分辨率 | 适用场景 |
 |------|------|-----------|----------|
 | **Gemini 2.5 Flash** | 2-3秒 | 1024px | 快速草图、迭代、原型 |
 | **Gemini 3 Pro** | 5-8秒 | **4K (3840px)** | 成品、营销素材、专业作品 |
 
-### 模型选择
-
-服务器**默认使用 Pro 模型**以获得最佳质量。你也可以控制它：
+服务器**默认使用 Pro 模型**以获得最佳画质。通过关键词控制：
 
 | 这样说... | 使用模型 |
 |-----------|----------|
@@ -152,7 +222,7 @@ uv cache clean banana-image-mcp
 | "4K"、"专业"、"高质量" | Pro |
 | （默认） | Pro |
 
-## 工具参数
+### 参数说明
 
 | 参数 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
@@ -165,23 +235,70 @@ uv cache clean banana-image-mcp
 | `n` | int | `1` | 生成数量（1-4） |
 | `negative_prompt` | string | - | 需要避免的内容 |
 
-## 环境变量
+### 环境变量
 
 | 变量 | 必填 | 默认值 | 说明 |
 |------|------|--------|------|
 | `GEMINI_API_KEY` | **是** | - | Gemini API 密钥 |
 | `IMAGE_OUTPUT_DIR` | 否 | `~/banana-images` | 图片保存目录 |
 
-## 可以创作什么
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
-以下是一些创作示例：
+<!-- USE CASES -->
+## 创作示例
 
-- **产品摄影**：专业的产品照片，带有影棚布光效果
-- **概念艺术**：奇幻风景、角色设计、科幻场景
-- **营销素材**：社交媒体图片、横幅、缩略图
-- **技术图表**：流程图、架构图（带文字）
-- **写实照片**：肖像、自然风光、城市摄影
+<table>
+<tr>
+<td align="center" width="33%">
+<b>产品摄影</b><br/>
+专业的影棚布光效果
+</td>
+<td align="center" width="33%">
+<b>概念艺术</b><br/>
+奇幻风景、角色设计
+</td>
+<td align="center" width="33%">
+<b>营销素材</b><br/>
+社交图片、横幅、缩略图
+</td>
+</tr>
+<tr>
+<td align="center" width="33%">
+<b>技术图表</b><br/>
+流程图、架构图
+</td>
+<td align="center" width="33%">
+<b>写实照片</b><br/>
+肖像、自然、城市摄影
+</td>
+<td align="center" width="33%">
+<b>UI/UX 原型</b><br/>
+应用界面、网页设计
+</td>
+</tr>
+</table>
 
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
+
+<!-- ROADMAP -->
+## 路线图
+
+- [x] 4K 分辨率输出（最高 3840px）
+- [x] 双模型支持（Flash + Pro）
+- [x] Google 搜索增强
+- [x] 灵活宽高比
+- [x] 自然语言图片编辑
+- [x] GitHub Actions CI/CD
+- [ ] 批量图片生成
+- [ ] 图生图转换
+- [ ] 视频生成支持
+- [ ] 本地模型支持（Ollama）
+
+查看 [open issues](https://github.com/zengwenliang416/banana-image-mcp/issues) 获取完整的功能建议和已知问题列表。
+
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
+
+<!-- DEVELOPMENT -->
 ## 开发指南
 
 ```bash
@@ -203,45 +320,67 @@ ruff check .
 ruff format .
 ```
 
-## 更新日志
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
-### v1.0.0
-- 首个稳定版本发布
-- 4K 分辨率输出支持（最高 3840px）
-- 双模型支持：Flash（快速）+ Pro（4K 画质）
-- 基于提示词的智能模型选择
-- Pro 模型 Google 搜索增强
-- 灵活宽高比（1:1、16:9、9:16、4:3、21:9 等）
-- 自然语言图片编辑
-- GitHub Actions CI/CD 工作流
+<!-- CONTRIBUTING -->
+## 参与贡献
 
-### v0.1.2
-- 添加 4K 分辨率输出支持
-- 默认使用 Pro 模型和 4K 分辨率
-- 修复 image_size 参数传递到 Gemini API 的问题
+贡献让开源社区变得精彩。欢迎任何形式的贡献！
 
-### v0.1.1
-- 更新包元数据和作者信息
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 发起 Pull Request
 
-### v0.1.0
-- 首次发布，支持双模型
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
-## 相关链接
-
-- [PyPI 包](https://pypi.org/project/banana-image-mcp/)
-- [GitHub 仓库](https://github.com/zengwenliang416/banana-image-mcp)
-- [问题反馈](https://github.com/zengwenliang416/banana-image-mcp/issues)
-
+<!-- LICENSE -->
 ## 许可证
 
-MIT License - 详见 [LICENSE](LICENSE) 文件。
+基于 MIT 许可证分发。详见 `LICENSE` 文件。
 
----
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
 
-<div align="center">
+<!-- CONTACT -->
+## 联系方式
 
-**由 [Wenliang Zeng](https://github.com/zengwenliang416) 用心打造**
+Wenliang Zeng - [@zengwenliang416](https://github.com/zengwenliang416)
 
-如果觉得有用，欢迎给个 Star！
+项目链接：[https://github.com/zengwenliang416/banana-image-mcp](https://github.com/zengwenliang416/banana-image-mcp)
 
-</div>
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
+
+<!-- ACKNOWLEDGMENTS -->
+## 致谢
+
+* [FastMCP](https://github.com/jlowin/fastmcp) - 本服务器使用的 MCP 框架
+* [Google Gemini](https://ai.google.dev/) - 图像生成背后的 AI 模型
+* [Anthropic MCP](https://modelcontextprotocol.io/) - 协议规范
+* [Best-README-Template](https://github.com/othneildrew/Best-README-Template) - README 设计灵感
+
+<p align="right">(<a href="#readme-top">返回顶部</a>)</p>
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[contributors-shield]: https://img.shields.io/github/contributors/zengwenliang416/banana-image-mcp.svg?style=for-the-badge
+[contributors-url]: https://github.com/zengwenliang416/banana-image-mcp/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/zengwenliang416/banana-image-mcp.svg?style=for-the-badge
+[forks-url]: https://github.com/zengwenliang416/banana-image-mcp/network/members
+[stars-shield]: https://img.shields.io/github/stars/zengwenliang416/banana-image-mcp.svg?style=for-the-badge
+[stars-url]: https://github.com/zengwenliang416/banana-image-mcp/stargazers
+[issues-shield]: https://img.shields.io/github/issues/zengwenliang416/banana-image-mcp.svg?style=for-the-badge
+[issues-url]: https://github.com/zengwenliang416/banana-image-mcp/issues
+[license-shield]: https://img.shields.io/github/license/zengwenliang416/banana-image-mcp.svg?style=for-the-badge
+[license-url]: https://github.com/zengwenliang416/banana-image-mcp/blob/main/LICENSE
+[pypi-shield]: https://img.shields.io/pypi/v/banana-image-mcp?style=for-the-badge&color=blue
+[pypi-url]: https://pypi.org/project/banana-image-mcp/
+[downloads-shield]: https://img.shields.io/pypi/dm/banana-image-mcp?style=for-the-badge&color=green
+
+[Python-badge]: https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white
+[Python-url]: https://www.python.org/
+[FastMCP-badge]: https://img.shields.io/badge/FastMCP-2.0+-00ADD8?style=for-the-badge
+[FastMCP-url]: https://github.com/jlowin/fastmcp
+[Gemini-badge]: https://img.shields.io/badge/Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white
+[Gemini-url]: https://ai.google.dev/
+[uv-badge]: https://img.shields.io/badge/uv-Package_Manager-DE5FE9?style=for-the-badge
+[uv-url]: https://github.com/astral-sh/uv
