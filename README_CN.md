@@ -40,11 +40,9 @@
   </p>
 </div>
 
-<!-- DEMO VIDEO -->
+<!-- DEMO -->
 <div align="center">
-  <video src="https://github.com/zengwenliang416/banana-image-mcp/raw/main/assets/demo.mp4" width="700" autoplay loop muted playsinline>
-    Your browser does not support the video tag.
-  </video>
+  <img src="./assets/demo.gif" alt="Demo" width="800">
 </div>
 
 <br />
