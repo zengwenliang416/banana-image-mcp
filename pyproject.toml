@@ -1,6 +1,6 @@
 [project]
 name = "banana-image-mcp"
-version = "1.0.0"
+version = "1.0.1"
 description = "A production-ready MCP server for AI-powered image generation using Gemini 3 Pro Image and Gemini 2.5 Flash Image with intelligent model selection"
 authors = [
     { name = "Wenliang Zeng", email = "wenliang_zeng416@163.com" }
