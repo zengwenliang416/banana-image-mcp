@@ -1,6 +1,6 @@
 [project]
 name = "banana-image-mcp"
-version = "0.1.2"
+version = "1.0.0"
 description = "A production-ready MCP server for AI-powered image generation using Gemini 3 Pro Image and Gemini 2.5 Flash Image with intelligent model selection"
 authors = [
     { name = "Wenliang Zeng", email = "wenliang_zeng416@163.com" }
@@ -10,7 +10,7 @@ license = { text = "MIT" }
 requires-python = ">=3.11"
 keywords = ["mcp", "ai", "image-generation", "gemini", "fastmcp", "4k", "banana-image", "grounding"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",

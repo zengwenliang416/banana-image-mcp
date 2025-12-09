@@ -110,7 +110,7 @@ Or specify a version explicitly:
   "mcpServers": {
     "banana-image": {
       "command": "uvx",
-      "args": ["banana-image-mcp==0.1.2"],
+      "args": ["banana-image-mcp==1.0.0"],
       "env": {
         "GEMINI_API_KEY": "your-api-key-here"
       }
@@ -204,6 +204,16 @@ ruff format .
 ```
 
 ## Changelog
+
+### v1.0.0
+- First stable release
+- 4K resolution output support (up to 3840px)
+- Dual model support: Flash (fast) + Pro (4K quality)
+- Intelligent model selection based on prompt
+- Google Search grounding for Pro model
+- Flexible aspect ratios (1:1, 16:9, 9:16, 4:3, 21:9, etc.)
+- Image editing with natural language
+- GitHub Actions CI/CD workflow
 
 ### v0.1.2
 - Added 4K resolution output support

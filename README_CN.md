@@ -110,7 +110,7 @@ uv cache clean banana-image-mcp
   "mcpServers": {
     "banana-image": {
       "command": "uvx",
-      "args": ["banana-image-mcp==0.1.2"],
+      "args": ["banana-image-mcp==1.0.0"],
       "env": {
         "GEMINI_API_KEY": "你的API密钥"
       }
@@ -204,6 +204,16 @@ ruff format .
 ```
 
 ## 更新日志
+
+### v1.0.0
+- 首个稳定版本发布
+- 4K 分辨率输出支持（最高 3840px）
+- 双模型支持：Flash（快速）+ Pro（4K 画质）
+- 基于提示词的智能模型选择
+- Pro 模型 Google 搜索增强
+- 灵活宽高比（1:1、16:9、9:16、4:3、21:9 等）
+- 自然语言图片编辑
+- GitHub Actions CI/CD 工作流
 
 ### v0.1.2
 - 添加 4K 分辨率输出支持
