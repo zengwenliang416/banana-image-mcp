@@ -217,11 +217,14 @@ class BaseImageService(ABC):
                     f"Generating image {i + 1}/{n}...",
                 )
 
-                # Call Gemini API
+                # Call Gemini API with resolution support
+                # Extract resolution from kwargs for image_size parameter
+                resolution = kwargs.get("resolution", "high")
                 response = self.gemini_client.generate_content(
                     contents,
                     config=gen_config if gen_config else None,
                     aspect_ratio=aspect_ratio,
+                    image_size=resolution,
                 )
                 images = self.gemini_client.extract_images(response)
 

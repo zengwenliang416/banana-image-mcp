@@ -66,6 +66,7 @@ class GeminiClient:
         contents: list,
         config: dict[str, Any] | None = None,
         aspect_ratio: str | None = None,
+        image_size: str | None = None,
         **kwargs
     ) -> any:
         """
@@ -75,6 +76,7 @@ class GeminiClient:
             contents: Content list (text, images, etc.)
             config: Generation configuration dict (model-specific parameters)
             aspect_ratio: Optional aspect ratio string (e.g., "16:9")
+            image_size: Optional output resolution ("1K", "2K", "4K") - Pro model only
             **kwargs: Additional parameters
 
         Returns:
@@ -101,9 +103,22 @@ class GeminiClient:
                     "response_modalities": ["Image"],  # Force image-only responses
                 }
 
-                # Add aspect ratio if provided
-                if aspect_ratio:
-                    config_kwargs["image_config"] = gx.ImageConfig(aspect_ratio=aspect_ratio)
+                # Build image config if aspect_ratio or image_size provided
+                if aspect_ratio or image_size:
+                    image_config_kwargs = {}
+                    if aspect_ratio:
+                        image_config_kwargs["aspect_ratio"] = aspect_ratio
+                    if image_size:
+                        # Normalize resolution format: "4k" -> "4K", "high" -> "4K"
+                        size_map = {
+                            "4k": "4K", "4K": "4K", "high": "4K",
+                            "2k": "2K", "2K": "2K",
+                            "1k": "1K", "1K": "1K", "low": "1K",
+                        }
+                        normalized_size = size_map.get(image_size, "4K")
+                        image_config_kwargs["image_size"] = normalized_size
+                        self.logger.info(f"Setting image_size={normalized_size}")
+                    config_kwargs["image_config"] = gx.ImageConfig(**image_config_kwargs)
 
                 # Merge filtered config parameters
                 config_kwargs.update(filtered_config)
