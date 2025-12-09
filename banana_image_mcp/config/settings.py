@@ -31,7 +31,7 @@ class ServerConfig:
     """Server configuration settings."""
 
     gemini_api_key: str
-    server_name: str = "nanobanana-mcp-server"
+    server_name: str = "banana-image-mcp"
     transport: str = "stdio"  # stdio or http
     host: str = "127.0.0.1"
     port: int = 9000
@@ -51,8 +51,8 @@ class ServerConfig:
         # Handle image output directory
         output_dir = os.getenv("IMAGE_OUTPUT_DIR", "").strip()
         if not output_dir:
-            # Default to ~/nanobanana-images in user's home directory for better compatibility
-            output_dir = str(Path.home() / "nanobanana-images")
+            # Default to ~/banana-images in user's home directory for better compatibility
+            output_dir = str(Path.home() / "banana-images")
 
         # Convert to absolute path and ensure it exists
         output_path = Path(output_dir).resolve()

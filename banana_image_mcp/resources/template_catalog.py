@@ -9,7 +9,7 @@ from ..config.constants import TEMPLATE_CATEGORIES
 def register_template_catalog_resource(server: FastMCP):
     """Register the template catalog resource with the FastMCP server."""
 
-    @server.resource("nano-banana://prompt-templates")
+    @server.resource("banana-image://prompt-templates")
     def prompt_templates_catalog() -> dict[str, Any]:
         """
         A compact catalog of prompt templates (same schemas as the @mcp.prompt items).
