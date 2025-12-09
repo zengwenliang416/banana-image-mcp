@@ -10,7 +10,6 @@ This module tests the aspect ratio feature added in PR #3, including:
 
 from unittest.mock import Mock, patch
 
-from google.genai import types as gx
 import pytest
 
 from banana_image_mcp.config.settings import GeminiConfig, ServerConfig
