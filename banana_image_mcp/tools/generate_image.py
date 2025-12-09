@@ -283,6 +283,7 @@ def register_generate_image_tool(server: FastMCP):
 def _get_enhanced_image_service():
     """Get the enhanced image service instance."""
     from ..services import get_enhanced_image_service
+
     return get_enhanced_image_service()
 
 
@@ -569,10 +570,7 @@ def _build_summary(
             if meta.get("parent_file_id"):
                 extra_info += f" • 👨‍👩‍👧 Parent: {meta.get('parent_file_id')}"
 
-        lines.append(
-            f"  {i}. `{full_path}`\n"
-            f"     📏 {width}x{height} • 💾 {size_mb}MB{extra_info}"
-        )
+        lines.append(f"  {i}. `{full_path}`\n     📏 {width}x{height} • 💾 {size_mb}MB{extra_info}")
 
     lines.append("\n🖼️ **Thumbnail previews shown below** (actual images saved to disk)")
     return "\n".join(lines)
@@ -625,22 +623,26 @@ def _build_structured_content(
         "workflow": f"workflows.md_{mode}_sequence",
         "images": metadata,
         "file_paths": [
-            m.get("full_path")
-            for m in metadata
-            if m and isinstance(m, dict) and m.get("full_path")
+            m.get("full_path") for m in metadata if m and isinstance(m, dict) and m.get("full_path")
         ],
         "files_api_ids": [
             m.get("files_api", {}).get("name")
             for m in metadata
-            if m and isinstance(m, dict) and m.get("files_api", {}) and m.get("files_api", {}).get("name")
+            if m
+            and isinstance(m, dict)
+            and m.get("files_api", {})
+            and m.get("files_api", {}).get("name")
         ],
         "parent_relationships": [
             (m.get("parent_file_id"), m.get("files_api", {}).get("name"))
             for m in metadata
             if m and isinstance(m, dict)
-        ] if mode == "edit" else [],
+        ]
+        if mode == "edit"
+        else [],
         "total_size_mb": round(
-            sum(m.get("size_bytes", 0) for m in metadata if m and isinstance(m, dict)) / (1024 * 1024),
+            sum(m.get("size_bytes", 0) for m in metadata if m and isinstance(m, dict))
+            / (1024 * 1024),
             2,
         ),
     }

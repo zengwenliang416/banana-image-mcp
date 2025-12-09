@@ -103,9 +103,7 @@ class TestModelSelection:
         max_examples=50,
         suppress_health_check=[HealthCheck.function_scoped_fixture],
     )
-    def test_explicit_pro_returns_pro_service(
-        self, model_selector, mock_pro_service, prompt: str
-    ):
+    def test_explicit_pro_returns_pro_service(self, model_selector, mock_pro_service, prompt: str):
         """
         **Feature: service-layer-refactoring, Property 9: Model Selection**
 
@@ -163,9 +161,7 @@ class TestModelSelection:
         assert service in [mock_flash_service, mock_pro_service]
         assert tier in [ModelTier.FLASH, ModelTier.PRO]
 
-    def test_quality_keywords_favor_pro(
-        self, model_selector, mock_pro_service
-    ):
+    def test_quality_keywords_favor_pro(self, model_selector, mock_pro_service):
         """
         **Feature: service-layer-refactoring, Property 9: Model Selection**
 
@@ -180,9 +176,7 @@ class TestModelSelection:
         assert service is mock_pro_service
         assert tier == ModelTier.PRO
 
-    def test_speed_keywords_favor_flash(
-        self, model_selector, mock_flash_service
-    ):
+    def test_speed_keywords_favor_flash(self, model_selector, mock_flash_service):
         """
         **Feature: service-layer-refactoring, Property 9: Model Selection**
 
@@ -197,9 +191,7 @@ class TestModelSelection:
         assert service is mock_flash_service
         assert tier == ModelTier.FLASH
 
-    def test_4k_resolution_requires_pro(
-        self, model_selector, mock_pro_service
-    ):
+    def test_4k_resolution_requires_pro(self, model_selector, mock_pro_service):
         """
         **Feature: service-layer-refactoring, Property 9: Model Selection**
 
@@ -214,9 +206,7 @@ class TestModelSelection:
         assert service is mock_pro_service
         assert tier == ModelTier.PRO
 
-    def test_grounding_favors_pro(
-        self, model_selector, mock_pro_service
-    ):
+    def test_grounding_favors_pro(self, model_selector, mock_pro_service):
         """
         **Feature: service-layer-refactoring, Property 9: Model Selection**
 

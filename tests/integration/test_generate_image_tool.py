@@ -13,15 +13,11 @@ from unittest.mock import MagicMock, Mock, patch
 import pytest
 
 from banana_image_mcp.config.settings import (
-    FlashImageConfig,
     ModelSelectionConfig,
     ModelTier,
-    ProImageConfig,
-    ServerConfig,
 )
 from banana_image_mcp.services.flash_image_service import FlashImageService
 from banana_image_mcp.services.gemini_client import GeminiClient
-from banana_image_mcp.services.image_storage_service import ImageStorageService
 from banana_image_mcp.services.model_selector import ModelSelector
 from banana_image_mcp.services.pro_image_service import ProImageService
 from banana_image_mcp.tools.generate_image import (
@@ -136,9 +132,7 @@ class TestGenerateImageToolIntegration:
         assert mode == "generate"
 
         # Step 4: Model selection (mock the service registry)
-        with patch(
-            "banana_image_mcp.services.get_model_selector"
-        ) as mock_get_selector:
+        with patch("banana_image_mcp.services.get_model_selector") as mock_get_selector:
             mock_get_selector.return_value = mock_services["model_selector"]
 
             import logging
@@ -208,9 +202,7 @@ class TestGenerateImageToolIntegration:
         assert mode == "edit"
 
         # Step 4: Model selection
-        with patch(
-            "banana_image_mcp.services.get_model_selector"
-        ) as mock_get_selector:
+        with patch("banana_image_mcp.services.get_model_selector") as mock_get_selector:
             mock_get_selector.return_value = mock_services["model_selector"]
 
             import logging
@@ -285,9 +277,7 @@ class TestGenerateImageToolIntegration:
             assert mode == "edit"
 
             # Step 4: Model selection
-            with patch(
-                "banana_image_mcp.services.get_model_selector"
-            ) as mock_get_selector:
+            with patch("banana_image_mcp.services.get_model_selector") as mock_get_selector:
                 mock_get_selector.return_value = mock_services["model_selector"]
 
                 import logging
@@ -345,9 +335,7 @@ class TestGenerateImageToolIntegration:
 
         Tests that the model selector correctly switches between models.
         """
-        with patch(
-            "banana_image_mcp.services.get_model_selector"
-        ) as mock_get_selector:
+        with patch("banana_image_mcp.services.get_model_selector") as mock_get_selector:
             mock_get_selector.return_value = mock_services["model_selector"]
 
             import logging

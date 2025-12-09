@@ -103,7 +103,11 @@ class ProImageService(BaseImageService):
         # Apply defaults
         level = thinking_level or self.pro_config.default_thinking_level
         media_res = media_resolution or self.pro_config.default_media_resolution
-        grounding = enable_grounding if enable_grounding is not None else self.pro_config.enable_search_grounding
+        grounding = (
+            enable_grounding
+            if enable_grounding is not None
+            else self.pro_config.enable_search_grounding
+        )
 
         return {
             "model": self.pro_config.model_name,

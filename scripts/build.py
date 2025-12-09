@@ -27,11 +27,7 @@ def clean_build_artifacts(root_dir: Path) -> None:
     """Clean previous build artifacts."""
 
     # Directories to clean
-    dirs_to_clean = [
-        root_dir / "dist",
-        root_dir / "build",
-        root_dir / "*.egg-info"
-    ]
+    dirs_to_clean = [root_dir / "dist", root_dir / "build", root_dir / "*.egg-info"]
 
     for path in dirs_to_clean:
         if path.exists():
@@ -63,8 +59,9 @@ def install_build_deps(root_dir: Path) -> None:
 
     # Check if build is available
     try:
-        subprocess.run(["uv", "run", "python", "-c", "import build"],
-                      check=True, capture_output=True)
+        subprocess.run(
+            ["uv", "run", "python", "-c", "import build"], check=True, capture_output=True
+        )
     except subprocess.CalledProcessError:
         run_command(["uv", "add", "--dev", "build"], "Installing build dependency")
 
@@ -91,6 +88,7 @@ def main():
 
     # Change to project root
     import os
+
     os.chdir(root_dir)
 
     # Verify configuration
@@ -105,7 +103,6 @@ def main():
     # Build the package
     run_command(["uv", "run", "python", "-m", "build"], "Building source and wheel distributions")
 
-
     # List created files with details
     dist_dir = root_dir / "dist"
     if dist_dir.exists():
@@ -115,8 +112,6 @@ def main():
                 size = file.stat().st_size
                 total_size += size
                 size / 1024
-
-
 
 
 if __name__ == "__main__":

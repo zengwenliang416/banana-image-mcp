@@ -78,4 +78,5 @@ def register_upload_file_tool(server: FastMCP):
 def _get_file_service():
     """Get the file service instance."""
     from ..services import get_file_service
+
     return get_file_service()

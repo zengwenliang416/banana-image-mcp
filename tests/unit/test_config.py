@@ -44,10 +44,14 @@ class TestConfigurationLoading:
 
         Should return valid config when GEMINI_API_KEY is set.
         """
-        with patch.dict(os.environ, {
-            "GEMINI_API_KEY": "test-api-key-12345",
-            "IMAGE_OUTPUT_DIR": str(tmp_path),
-        }, clear=False):
+        with patch.dict(
+            os.environ,
+            {
+                "GEMINI_API_KEY": "test-api-key-12345",
+                "IMAGE_OUTPUT_DIR": str(tmp_path),
+            },
+            clear=False,
+        ):
             config = ServerConfig.from_env()
 
             assert config.gemini_api_key == "test-api-key-12345"
@@ -59,10 +63,14 @@ class TestConfigurationLoading:
 
         Should return valid config when GOOGLE_API_KEY is set.
         """
-        with patch.dict(os.environ, {
-            "GOOGLE_API_KEY": "google-api-key-67890",
-            "IMAGE_OUTPUT_DIR": str(tmp_path),
-        }, clear=False):
+        with patch.dict(
+            os.environ,
+            {
+                "GOOGLE_API_KEY": "google-api-key-67890",
+                "IMAGE_OUTPUT_DIR": str(tmp_path),
+            },
+            clear=False,
+        ):
             # Remove GEMINI_API_KEY if present
             env = os.environ.copy()
             env.pop("GEMINI_API_KEY", None)
@@ -81,9 +89,13 @@ class TestConfigurationLoading:
 
         Should raise ValueError when neither API key is set.
         """
-        with patch.dict(os.environ, {
-            "IMAGE_OUTPUT_DIR": str(tmp_path),
-        }, clear=True):
+        with patch.dict(
+            os.environ,
+            {
+                "IMAGE_OUTPUT_DIR": str(tmp_path),
+            },
+            clear=True,
+        ):
             with pytest.raises(ValueError) as exc_info:
                 ServerConfig.from_env()
 
@@ -99,10 +111,14 @@ class TestConfigurationLoading:
         output_dir = tmp_path / "new_output_dir"
         assert not output_dir.exists()
 
-        with patch.dict(os.environ, {
-            "GEMINI_API_KEY": "test-key",
-            "IMAGE_OUTPUT_DIR": str(output_dir),
-        }, clear=False):
+        with patch.dict(
+            os.environ,
+            {
+                "GEMINI_API_KEY": "test-key",
+                "IMAGE_OUTPUT_DIR": str(output_dir),
+            },
+            clear=False,
+        ):
             config = ServerConfig.from_env()
 
             assert output_dir.exists()
@@ -116,20 +132,22 @@ class TestConfigurationLoading:
         max_examples=20,
         suppress_health_check=[HealthCheck.function_scoped_fixture],
     )
-    def test_from_env_respects_transport_settings(
-        self, tmp_path, transport: str, port: int
-    ):
+    def test_from_env_respects_transport_settings(self, tmp_path, transport: str, port: int):
         """
         **Feature: service-layer-refactoring, Property 13: Configuration Loading**
 
         Should respect transport and port settings from environment.
         """
-        with patch.dict(os.environ, {
-            "GEMINI_API_KEY": "test-key",
-            "IMAGE_OUTPUT_DIR": str(tmp_path),
-            "FASTMCP_TRANSPORT": transport,
-            "FASTMCP_PORT": str(port),
-        }, clear=False):
+        with patch.dict(
+            os.environ,
+            {
+                "GEMINI_API_KEY": "test-key",
+                "IMAGE_OUTPUT_DIR": str(tmp_path),
+                "FASTMCP_TRANSPORT": transport,
+                "FASTMCP_PORT": str(port),
+            },
+            clear=False,
+        ):
             config = ServerConfig.from_env()
 
             assert config.transport == transport

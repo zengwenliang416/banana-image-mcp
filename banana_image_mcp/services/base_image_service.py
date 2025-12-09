@@ -135,9 +135,7 @@ class BaseImageService(ABC):
         # Add input images if provided
         if input_images:
             images_b64, mime_types = zip(*input_images, strict=False)
-            image_parts = self.gemini_client.create_image_parts(
-                list(images_b64), list(mime_types)
-            )
+            image_parts = self.gemini_client.create_image_parts(list(images_b64), list(mime_types))
             # Place images before text for better context
             contents = list(image_parts) + contents
 
@@ -244,15 +242,12 @@ class BaseImageService(ABC):
                     )
 
                     # Process output
-                    mcp_image = self._process_image_output(
-                        image_bytes, metadata, use_storage
-                    )
+                    mcp_image = self._process_image_output(image_bytes, metadata, use_storage)
                     all_images.append(mcp_image)
                     all_metadata.append(metadata)
 
                     self.logger.info(
-                        f"Generated image {i + 1}.{j + 1} "
-                        f"(size: {len(image_bytes)} bytes)"
+                        f"Generated image {i + 1}.{j + 1} (size: {len(image_bytes)} bytes)"
                     )
 
             except Exception as e:
@@ -366,14 +361,10 @@ class BaseImageService(ABC):
                 progress.update(20, "Preparing edit request...")
 
                 # Enhance instruction if needed
-                enhanced_instruction = self._enhance_prompt(
-                    instruction, **model_specific_params
-                )
+                enhanced_instruction = self._enhance_prompt(instruction, **model_specific_params)
 
                 # Create image parts
-                image_parts = self.gemini_client.create_image_parts(
-                    [base_image_b64], [mime_type]
-                )
+                image_parts = self.gemini_client.create_image_parts([base_image_b64], [mime_type])
                 contents = [*list(image_parts), enhanced_instruction]
 
                 progress.update(40, "Sending edit request to Gemini API...")
@@ -408,14 +399,10 @@ class BaseImageService(ABC):
                         **model_specific_params,
                     )
 
-                    mcp_image = self._process_image_output(
-                        image_bytes, metadata, use_storage
-                    )
+                    mcp_image = self._process_image_output(image_bytes, metadata, use_storage)
                     mcp_images.append(mcp_image)
 
-                    self.logger.info(
-                        f"Edited image {i + 1} (size: {len(image_bytes)} bytes)"
-                    )
+                    self.logger.info(f"Edited image {i + 1} (size: {len(image_bytes)} bytes)")
 
                 progress.update(
                     100,

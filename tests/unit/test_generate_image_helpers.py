@@ -34,10 +34,11 @@ from banana_image_mcp.tools.generate_image import (
 # =============================================================================
 
 # Strategy for generating file paths (non-empty strings)
-path_strategy = st.text(min_size=1, max_size=100, alphabet=st.characters(
-    whitelist_categories=("L", "N", "Pc"),
-    whitelist_characters="/-_."
-))
+path_strategy = st.text(
+    min_size=1,
+    max_size=100,
+    alphabet=st.characters(whitelist_categories=("L", "N", "Pc"), whitelist_characters="/-_."),
+)
 
 # Strategy for optional paths
 optional_path_strategy = st.one_of(st.none(), path_strategy)
@@ -332,9 +333,7 @@ class TestResponseBuilding:
             "model_id": "gemini-2.5-flash-image",
         }
 
-    def test_build_summary_contains_required_info(
-        self, sample_metadata, sample_model_info
-    ):
+    def test_build_summary_contains_required_info(self, sample_metadata, sample_model_info):
         """
         **Feature: service-layer-refactoring, Property 10: Response Building**
 

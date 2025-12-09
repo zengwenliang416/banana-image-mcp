@@ -8,22 +8,25 @@ from dotenv import load_dotenv
 
 class ModelTier(str, Enum):
     """Model selection options."""
+
     FLASH = "flash"  # Speed-optimized (Gemini 2.5 Flash)
-    PRO = "pro"      # Quality-optimized (Gemini 3 Pro)
-    AUTO = "auto"    # Automatic selection
+    PRO = "pro"  # Quality-optimized (Gemini 3 Pro)
+    AUTO = "auto"  # Automatic selection
 
 
 class ThinkingLevel(str, Enum):
     """Gemini 3 thinking levels for advanced reasoning."""
-    LOW = "low"      # Minimal latency, less reasoning
-    HIGH = "high"    # Maximum reasoning (default for Pro)
+
+    LOW = "low"  # Minimal latency, less reasoning
+    HIGH = "high"  # Maximum reasoning (default for Pro)
 
 
 class MediaResolution(str, Enum):
     """Media resolution for vision processing."""
-    LOW = "low"      # Faster, less detail
+
+    LOW = "low"  # Faster, less detail
     MEDIUM = "medium"  # Balanced
-    HIGH = "high"    # Maximum detail
+    HIGH = "high"  # Maximum detail
 
 
 @dataclass
@@ -71,6 +74,7 @@ class ServerConfig:
 @dataclass
 class BaseModelConfig:
     """Shared base configuration for all models."""
+
     max_images_per_request: int = 4
     max_inline_image_size: int = 20 * 1024 * 1024  # 20MB
     default_image_format: str = "png"
@@ -80,6 +84,7 @@ class BaseModelConfig:
 @dataclass
 class FlashImageConfig(BaseModelConfig):
     """Gemini 2.5 Flash Image configuration (speed-optimized)."""
+
     model_name: str = "gemini-2.5-flash-image"
     max_resolution: int = 1024
     supports_thinking: bool = False
@@ -90,6 +95,7 @@ class FlashImageConfig(BaseModelConfig):
 @dataclass
 class ProImageConfig(BaseModelConfig):
     """Gemini 3 Pro Image configuration (quality-optimized)."""
+
     model_name: str = "gemini-3-pro-image-preview"
     max_resolution: int = 3840  # 4K
     default_resolution: str = "high"  # low/medium/high
@@ -105,16 +111,39 @@ class ProImageConfig(BaseModelConfig):
 @dataclass
 class ModelSelectionConfig:
     """Configuration for intelligent model selection."""
+
     default_tier: ModelTier = ModelTier.PRO
-    auto_quality_keywords: list[str] = field(default_factory=lambda: [
-        "4k", "high quality", "professional", "production",
-        "high-res", "high resolution", "detailed", "sharp", "crisp",
-        "hd", "ultra", "premium", "magazine", "print"
-    ])
-    auto_speed_keywords: list[str] = field(default_factory=lambda: [
-        "quick", "fast", "draft", "prototype", "sketch",
-        "rapid", "rough", "temporary", "test"
-    ])
+    auto_quality_keywords: list[str] = field(
+        default_factory=lambda: [
+            "4k",
+            "high quality",
+            "professional",
+            "production",
+            "high-res",
+            "high resolution",
+            "detailed",
+            "sharp",
+            "crisp",
+            "hd",
+            "ultra",
+            "premium",
+            "magazine",
+            "print",
+        ]
+    )
+    auto_speed_keywords: list[str] = field(
+        default_factory=lambda: [
+            "quick",
+            "fast",
+            "draft",
+            "prototype",
+            "sketch",
+            "rapid",
+            "rough",
+            "temporary",
+            "test",
+        ]
+    )
 
     @classmethod
     def from_env(cls) -> "ModelSelectionConfig":
@@ -133,6 +162,7 @@ class ModelSelectionConfig:
 @dataclass
 class GeminiConfig:
     """Legacy Gemini API configuration (backward compatibility)."""
+
     model_name: str = "gemini-2.5-flash-image"
     max_images_per_request: int = 4
     max_inline_image_size: int = 20 * 1024 * 1024  # 20MB

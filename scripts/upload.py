@@ -36,8 +36,9 @@ def check_dependencies() -> bool:
 
     # Check twine
     try:
-        subprocess.run(["uv", "run", "python", "-c", "import twine"],
-                      check=True, capture_output=True)
+        subprocess.run(
+            ["uv", "run", "python", "-c", "import twine"], check=True, capture_output=True
+        )
     except subprocess.CalledProcessError:
         result = subprocess.run(["uv", "add", "--dev", "twine"], capture_output=True)
         if result.returncode != 0:
@@ -75,7 +76,6 @@ def check_pypirc() -> tuple[bool, bool]:
     has_testpypi = "[testpypi]" in content
     has_pypi = "[pypi]" in content
 
-
     return has_testpypi, has_pypi
 
 
@@ -95,7 +95,7 @@ def get_package_version(root_dir: Path) -> str | None:
         for line in content.split("\n"):
             if line.strip().startswith("version = "):
                 # Extract version from 'version = "0.1.0"'
-                version = line.split("=")[1].strip().strip('"\'')
+                version = line.split("=")[1].strip().strip("\"'")
                 return version
     except Exception:
         pass
@@ -106,11 +106,11 @@ def get_package_version(root_dir: Path) -> str | None:
 def upload_to_repository(repository: str, dist_files: list[Path]) -> bool:
     """Upload to specified repository."""
 
-
     # First, check the package
     check_result = subprocess.run(
         ["uv", "run", "twine", "check"] + [str(f) for f in dist_files],
-        capture_output=True, text=True
+        capture_output=True,
+        text=True,
     )
 
     if check_result.returncode != 0:
@@ -124,7 +124,6 @@ def upload_to_repository(repository: str, dist_files: list[Path]) -> bool:
 
     # Add files
     cmd.extend([str(f) for f in dist_files])
-
 
     try:
         subprocess.run(cmd, check=True, text=True)

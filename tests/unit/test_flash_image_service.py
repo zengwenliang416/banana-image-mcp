@@ -88,9 +88,7 @@ class TestServiceInitializationAndInheritance:
         # Check FlashImageService-specific attribute
         assert service.flash_config is mock_flash_config
 
-    def test_flash_service_without_storage(
-        self, mock_flash_gemini_client, mock_flash_config
-    ):
+    def test_flash_service_without_storage(self, mock_flash_gemini_client, mock_flash_config):
         """
         **Feature: service-layer-refactoring, Property 1: Service Initialization and Inheritance**
 

@@ -46,7 +46,9 @@ context_strategy = st.dictionaries(
 message_strategy = st.text(min_size=1, max_size=200)
 
 # Strategy for generating field names
-field_strategy = st.text(min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("L", "N", "Pc")))
+field_strategy = st.text(
+    min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("L", "N", "Pc"))
+)
 
 # Strategy for generating field values (various types, excluding None)
 value_strategy = st.one_of(
@@ -198,9 +200,7 @@ class TestSubclassSerializationRoundTrip:
         error_code=st.one_of(st.none(), error_code_strategy),
     )
     @settings(max_examples=50)
-    def test_configuration_error_serialization(
-        self, message: str, error_code: ErrorCode | None
-    ):
+    def test_configuration_error_serialization(self, message: str, error_code: ErrorCode | None):
         """ConfigurationError should serialize correctly."""
         error = ConfigurationError(message=message, error_code=error_code)
         result = error.to_dict()
@@ -213,9 +213,7 @@ class TestSubclassSerializationRoundTrip:
         error_code=st.one_of(st.none(), error_code_strategy),
     )
     @settings(max_examples=50)
-    def test_gemini_api_error_serialization(
-        self, message: str, error_code: ErrorCode | None
-    ):
+    def test_gemini_api_error_serialization(self, message: str, error_code: ErrorCode | None):
         """GeminiAPIError should serialize correctly."""
         error = GeminiAPIError(message=message, error_code=error_code)
         result = error.to_dict()
@@ -228,9 +226,7 @@ class TestSubclassSerializationRoundTrip:
         error_code=st.one_of(st.none(), error_code_strategy),
     )
     @settings(max_examples=50)
-    def test_image_processing_error_serialization(
-        self, message: str, error_code: ErrorCode | None
-    ):
+    def test_image_processing_error_serialization(self, message: str, error_code: ErrorCode | None):
         """ImageProcessingError should serialize correctly."""
         error = ImageProcessingError(message=message, error_code=error_code)
         result = error.to_dict()
@@ -243,9 +239,7 @@ class TestSubclassSerializationRoundTrip:
         error_code=st.one_of(st.none(), error_code_strategy),
     )
     @settings(max_examples=50)
-    def test_file_operation_error_serialization(
-        self, message: str, error_code: ErrorCode | None
-    ):
+    def test_file_operation_error_serialization(self, message: str, error_code: ErrorCode | None):
         """FileOperationError should serialize correctly."""
         error = FileOperationError(message=message, error_code=error_code)
         result = error.to_dict()

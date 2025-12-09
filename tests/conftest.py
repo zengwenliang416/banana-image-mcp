@@ -283,15 +283,17 @@ def mock_storage_service(mock_stored_image_info: StoredImageInfo) -> Mock:
     service.cleanup_all = Mock(return_value=1)
 
     # Mock get_storage_stats
-    service.get_storage_stats = Mock(return_value={
-        "total_images": 1,
-        "total_size_bytes": 102400,
-        "total_size_mb": 0.1,
-        "total_thumbnail_size_bytes": 10240,
-        "total_thumbnail_size_kb": 10.0,
-        "base_directory": "/tmp/test-images",
-        "default_ttl_seconds": 3600,
-    })
+    service.get_storage_stats = Mock(
+        return_value={
+            "total_images": 1,
+            "total_size_bytes": 102400,
+            "total_size_mb": 0.1,
+            "total_thumbnail_size_bytes": 10240,
+            "total_thumbnail_size_kb": 10.0,
+            "base_directory": "/tmp/test-images",
+            "default_ttl_seconds": 3600,
+        }
+    )
 
     return service
 
@@ -353,6 +355,7 @@ def sample_image_base64(sample_image_bytes: bytes) -> str:
         Base64 encoded PNG image string.
     """
     import base64
+
     return base64.b64encode(sample_image_bytes).decode("utf-8")
 
 

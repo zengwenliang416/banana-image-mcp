@@ -227,8 +227,16 @@ def validate_aspect_ratio_string(aspect_ratio: str) -> None:
     # Supported aspect ratios according to Gemini API documentation
     # https://ai.google.dev/gemini-api/docs/image-generation#optional_configurations
     SUPPORTED_ASPECT_RATIOS = [
-        "1:1", "2:3", "3:2", "3:4", "4:3",
-        "4:5", "5:4", "9:16", "16:9", "21:9"
+        "1:1",
+        "2:3",
+        "3:2",
+        "3:4",
+        "4:3",
+        "4:5",
+        "5:4",
+        "9:16",
+        "16:9",
+        "21:9",
     ]
 
     if aspect_ratio not in SUPPORTED_ASPECT_RATIOS:

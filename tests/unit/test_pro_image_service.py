@@ -226,9 +226,7 @@ class TestProServiceBehaviorConsistency:
         max_examples=100,
         suppress_health_check=[HealthCheck.function_scoped_fixture],
     )
-    def test_enhance_prompt_with_resolution(
-        self, pro_service, prompt: str, resolution: str
-    ):
+    def test_enhance_prompt_with_resolution(self, pro_service, prompt: str, resolution: str):
         """
         **Feature: service-layer-refactoring, Property 3: Pro Service Behavior Consistency**
 

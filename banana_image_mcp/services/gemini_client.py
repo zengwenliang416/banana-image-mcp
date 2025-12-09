@@ -20,7 +20,7 @@ class GeminiClient:
     def __init__(
         self,
         config: ServerConfig,
-        gemini_config: GeminiConfig | BaseModelConfig | FlashImageConfig | ProImageConfig
+        gemini_config: GeminiConfig | BaseModelConfig | FlashImageConfig | ProImageConfig,
     ):
         self.config = config
         self.gemini_config = gemini_config
@@ -40,7 +40,9 @@ class GeminiClient:
             return []
 
         if len(images_b64) != len(mime_types):
-            raise ValueError(f"Images and MIME types count mismatch: {len(images_b64)} vs {len(mime_types)}")
+            raise ValueError(
+                f"Images and MIME types count mismatch: {len(images_b64)} vs {len(mime_types)}"
+            )
 
         parts = []
         for i, (b64, mime_type) in enumerate(zip(images_b64, mime_types, strict=False)):
@@ -67,7 +69,7 @@ class GeminiClient:
         config: dict[str, Any] | None = None,
         aspect_ratio: str | None = None,
         image_size: str | None = None,
-        **kwargs
+        **kwargs,
     ) -> any:
         """
         Generate content using Gemini API with model-aware parameter handling.
@@ -111,9 +113,14 @@ class GeminiClient:
                     if image_size:
                         # Normalize resolution format: "4k" -> "4K", "high" -> "4K"
                         size_map = {
-                            "4k": "4K", "4K": "4K", "high": "4K",
-                            "2k": "2K", "2K": "2K",
-                            "1k": "1K", "1K": "1K", "low": "1K",
+                            "4k": "4K",
+                            "4K": "4K",
+                            "high": "4K",
+                            "2k": "2K",
+                            "2K": "2K",
+                            "1k": "1K",
+                            "1K": "1K",
+                            "low": "1K",
                         }
                         normalized_size = size_map.get(image_size, "4K")
                         image_config_kwargs["image_size"] = normalized_size
@@ -182,9 +189,7 @@ class GeminiClient:
             # Output resolution hints (may not be directly supported by API)
             if "output_resolution" in config:
                 # This might need to be encoded in the prompt instead
-                self.logger.debug(
-                    f"Output resolution requested: {config['output_resolution']}"
-                )
+                self.logger.debug(f"Output resolution requested: {config['output_resolution']}")
 
             # Note: enable_grounding may be controlled via system instructions
             # rather than as a direct API parameter in some SDK versions

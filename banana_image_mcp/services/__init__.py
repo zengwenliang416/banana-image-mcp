@@ -101,7 +101,7 @@ def initialize_services(server_config: ServerConfig, gemini_config: GeminiConfig
     # Create model selector with new service classes
     _model_selector = ModelSelector(
         _flash_image_service,  # Flash service (new)
-        _pro_image_service,    # Pro service
+        _pro_image_service,  # Pro service
         selection_config,
     )
 

@@ -17,10 +17,7 @@ from banana_image_mcp.config.settings import GeminiConfig, ServerConfig
 from banana_image_mcp.services.gemini_client import GeminiClient
 
 # Supported aspect ratios according to Gemini API docs
-SUPPORTED_ASPECT_RATIOS = [
-    "1:1", "2:3", "3:2", "3:4", "4:3",
-    "4:5", "5:4", "9:16", "16:9", "21:9"
-]
+SUPPORTED_ASPECT_RATIOS = ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"]
 
 
 class TestAspectRatioValidation:
@@ -49,6 +46,7 @@ class TestAspectRatioValidation:
 
         # Check that aspect_ratio parameter exists
         import inspect
+
         sig = inspect.signature(tool_func.fn)
         assert "aspect_ratio" in sig.parameters
 
@@ -85,10 +83,7 @@ class TestGeminiClientAspectRatio:
             mock_gx.GenerateContentConfig = Mock()
 
             # Call generate_content with aspect_ratio
-            gemini_client.generate_content(
-                contents=["test prompt"],
-                aspect_ratio="16:9"
-            )
+            gemini_client.generate_content(contents=["test prompt"], aspect_ratio="16:9")
 
             # Verify ImageConfig was called with aspect_ratio
             mock_gx.ImageConfig.assert_called_once_with(aspect_ratio="16:9")
@@ -107,19 +102,15 @@ class TestGeminiClientAspectRatio:
     def test_config_conflict_warning(self, gemini_client, caplog):
         """Test warning when both config kwarg and aspect_ratio are provided."""
         import logging
+
         caplog.set_level(logging.WARNING)
 
         # Provide both config kwarg and aspect_ratio
         custom_config = Mock(spec=gx.GenerateContentConfig)
-        gemini_client.generate_content(
-            contents=["test"],
-            aspect_ratio="16:9",
-            config=custom_config
-        )
+        gemini_client.generate_content(contents=["test"], aspect_ratio="16:9", config=custom_config)
 
         # Verify warning was logged
-        assert any("ignoring aspect_ratio" in record.message.lower()
-                  for record in caplog.records)
+        assert any("ignoring aspect_ratio" in record.message.lower() for record in caplog.records)
 
     def test_response_modalities_forced_to_image(self, gemini_client):
         """Test that response_modalities is always set to ['Image']."""
@@ -127,10 +118,7 @@ class TestGeminiClientAspectRatio:
             mock_gx.ImageConfig = Mock()
             mock_gx.GenerateContentConfig = Mock()
 
-            gemini_client.generate_content(
-                contents=["test"],
-                aspect_ratio="16:9"
-            )
+            gemini_client.generate_content(contents=["test"], aspect_ratio="16:9")
 
             # Check that GenerateContentConfig was called with response_modalities
             call_kwargs = mock_gx.GenerateContentConfig.call_args[1]

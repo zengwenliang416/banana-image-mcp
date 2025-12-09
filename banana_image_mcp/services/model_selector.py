@@ -63,19 +63,14 @@ class ModelSelector:
         # Auto selection logic
         if requested_tier == ModelTier.AUTO or requested_tier is None:
             tier = self._auto_select(prompt, **kwargs)
-            service = (
-                self.pro_service if tier == ModelTier.PRO
-                else self.flash_service
-            )
+            service = self.pro_service if tier == ModelTier.PRO else self.flash_service
             self.logger.info(
                 f"Auto-selected {tier.value.upper()} model for prompt: '{prompt[:50]}...'"
             )
             return service, tier
 
         # Fallback to Flash for unknown values
-        self.logger.warning(
-            f"Unknown model tier '{requested_tier}', falling back to Flash"
-        )
+        self.logger.warning(f"Unknown model tier '{requested_tier}', falling back to Flash")
         return self.flash_service, ModelTier.FLASH
 
     def _auto_select(self, prompt: str, **kwargs) -> ModelTier:
@@ -103,21 +98,18 @@ class ModelSelector:
 
         # Analyze prompt for quality indicators
         quality_score = sum(
-            1 for keyword in self.config.auto_quality_keywords
-            if keyword in prompt_lower
+            1 for keyword in self.config.auto_quality_keywords if keyword in prompt_lower
         )
 
         # Analyze prompt for speed indicators
         speed_score = sum(
-            1 for keyword in self.config.auto_speed_keywords
-            if keyword in prompt_lower
+            1 for keyword in self.config.auto_speed_keywords if keyword in prompt_lower
         )
 
         # Strong quality indicators (weighted heavily)
         strong_quality_keywords = ["4k", "professional", "production", "high-res", "hd"]
         strong_quality_matches = sum(
-            1 for keyword in strong_quality_keywords
-            if keyword in prompt_lower
+            1 for keyword in strong_quality_keywords if keyword in prompt_lower
         )
         quality_score += strong_quality_matches * 2  # Double weight
 
@@ -193,10 +185,10 @@ class ModelSelector:
                     "4K resolution",
                     "Google Search grounding",
                     "Advanced reasoning",
-                    "High-quality text rendering"
+                    "High-quality text rendering",
                 ],
                 "best_for": "Professional assets, production-ready images",
-                "emoji": "🏆"
+                "emoji": "🏆",
             }
         else:  # FLASH
             return {
@@ -204,11 +196,7 @@ class ModelSelector:
                 "name": "Gemini 2.5 Flash Image",
                 "model_id": "gemini-2.5-flash-image",
                 "max_resolution": "1024px",
-                "features": [
-                    "Very fast generation",
-                    "Low latency",
-                    "High-volume support"
-                ],
+                "features": ["Very fast generation", "Low latency", "High-volume support"],
                 "best_for": "Rapid prototyping, quick iterations",
-                "emoji": "⚡"
+                "emoji": "⚡",
             }
