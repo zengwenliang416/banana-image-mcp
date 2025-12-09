@@ -12,19 +12,19 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-from nanobanana_mcp_server.config.settings import (
+from banana_image_mcp.config.settings import (
     FlashImageConfig,
     ModelSelectionConfig,
     ModelTier,
     ProImageConfig,
     ServerConfig,
 )
-from nanobanana_mcp_server.services.flash_image_service import FlashImageService
-from nanobanana_mcp_server.services.gemini_client import GeminiClient
-from nanobanana_mcp_server.services.image_storage_service import ImageStorageService
-from nanobanana_mcp_server.services.model_selector import ModelSelector
-from nanobanana_mcp_server.services.pro_image_service import ProImageService
-from nanobanana_mcp_server.tools.generate_image import (
+from banana_image_mcp.services.flash_image_service import FlashImageService
+from banana_image_mcp.services.gemini_client import GeminiClient
+from banana_image_mcp.services.image_storage_service import ImageStorageService
+from banana_image_mcp.services.model_selector import ModelSelector
+from banana_image_mcp.services.pro_image_service import ProImageService
+from banana_image_mcp.tools.generate_image import (
     _build_structured_content,
     _build_summary,
     _collect_input_paths,
@@ -137,7 +137,7 @@ class TestGenerateImageToolIntegration:
 
         # Step 4: Model selection (mock the service registry)
         with patch(
-            "nanobanana_mcp_server.services.get_model_selector"
+            "banana_image_mcp.services.get_model_selector"
         ) as mock_get_selector:
             mock_get_selector.return_value = mock_services["model_selector"]
 
@@ -209,7 +209,7 @@ class TestGenerateImageToolIntegration:
 
         # Step 4: Model selection
         with patch(
-            "nanobanana_mcp_server.services.get_model_selector"
+            "banana_image_mcp.services.get_model_selector"
         ) as mock_get_selector:
             mock_get_selector.return_value = mock_services["model_selector"]
 
@@ -286,7 +286,7 @@ class TestGenerateImageToolIntegration:
 
             # Step 4: Model selection
             with patch(
-                "nanobanana_mcp_server.services.get_model_selector"
+                "banana_image_mcp.services.get_model_selector"
             ) as mock_get_selector:
                 mock_get_selector.return_value = mock_services["model_selector"]
 
@@ -346,7 +346,7 @@ class TestGenerateImageToolIntegration:
         Tests that the model selector correctly switches between models.
         """
         with patch(
-            "nanobanana_mcp_server.services.get_model_selector"
+            "banana_image_mcp.services.get_model_selector"
         ) as mock_get_selector:
             mock_get_selector.return_value = mock_services["model_selector"]
 
@@ -557,7 +557,7 @@ class TestGenerateImageToolIntegration:
 
         **Validates: Requirements 7.1**
         """
-        from nanobanana_mcp_server.core.exceptions import ValidationError
+        from banana_image_mcp.core.exceptions import ValidationError
 
         with pytest.raises(ValidationError) as exc_info:
             _validate_inputs("invalid_mode", None, None)
@@ -570,7 +570,7 @@ class TestGenerateImageToolIntegration:
 
         **Validates: Requirements 7.2**
         """
-        from nanobanana_mcp_server.core.exceptions import ValidationError
+        from banana_image_mcp.core.exceptions import ValidationError
 
         with pytest.raises(ValidationError) as exc_info:
             _validate_inputs("edit", ["/nonexistent/path/image.png"], None)

@@ -15,7 +15,7 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 import pytest
 
-from nanobanana_mcp_server.config.settings import (
+from banana_image_mcp.config.settings import (
     BaseModelConfig,
     FlashImageConfig,
     ModelSelectionConfig,
@@ -51,7 +51,7 @@ class TestConfigurationLoading:
             config = ServerConfig.from_env()
 
             assert config.gemini_api_key == "test-api-key-12345"
-            assert config.server_name == "nanobanana-mcp-server"
+            assert config.server_name == "banana-image-mcp"
 
     def test_from_env_with_google_api_key(self, tmp_path):
         """

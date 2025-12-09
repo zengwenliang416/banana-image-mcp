@@ -13,8 +13,8 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 import pytest
 
-from nanobanana_mcp_server.services.base_image_service import BaseImageService
-from nanobanana_mcp_server.services.flash_image_service import FlashImageService
+from banana_image_mcp.services.base_image_service import BaseImageService
+from banana_image_mcp.services.flash_image_service import FlashImageService
 
 # =============================================================================
 # Hypothesis Strategies

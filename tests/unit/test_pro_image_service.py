@@ -12,9 +12,9 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 import pytest
 
-from nanobanana_mcp_server.config.settings import MediaResolution, ThinkingLevel
-from nanobanana_mcp_server.services.base_image_service import BaseImageService
-from nanobanana_mcp_server.services.pro_image_service import ProImageService
+from banana_image_mcp.config.settings import MediaResolution, ThinkingLevel
+from banana_image_mcp.services.base_image_service import BaseImageService
+from banana_image_mcp.services.pro_image_service import ProImageService
 
 # =============================================================================
 # Hypothesis Strategies

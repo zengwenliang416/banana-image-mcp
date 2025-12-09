@@ -13,7 +13,7 @@ from unittest.mock import MagicMock, Mock
 from PIL import Image as PILImage
 import pytest
 
-from nanobanana_mcp_server.config.settings import (
+from banana_image_mcp.config.settings import (
     FlashImageConfig,
     GeminiConfig,
     MediaResolution,
@@ -21,8 +21,8 @@ from nanobanana_mcp_server.config.settings import (
     ServerConfig,
     ThinkingLevel,
 )
-from nanobanana_mcp_server.services.gemini_client import GeminiClient
-from nanobanana_mcp_server.services.image_storage_service import (
+from banana_image_mcp.services.gemini_client import GeminiClient
+from banana_image_mcp.services.image_storage_service import (
     ImageStorageService,
     StoredImageInfo,
 )
@@ -41,13 +41,13 @@ def mock_server_config() -> ServerConfig:
     """
     return ServerConfig(
         gemini_api_key="test-api-key-12345",
-        server_name="test-nanobanana-server",
+        server_name="test-banana-server",
         transport="stdio",
         host="127.0.0.1",
         port=9000,
         mask_error_details=False,
         max_concurrent_requests=10,
-        image_output_dir="/tmp/test-nanobanana-images",
+        image_output_dir="/tmp/test-banana-images",
     )
 
 

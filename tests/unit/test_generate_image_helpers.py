@@ -19,9 +19,9 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 import pytest
 
-from nanobanana_mcp_server.config.settings import ModelTier
-from nanobanana_mcp_server.core.exceptions import ValidationError
-from nanobanana_mcp_server.tools.generate_image import (
+from banana_image_mcp.config.settings import ModelTier
+from banana_image_mcp.core.exceptions import ValidationError
+from banana_image_mcp.tools.generate_image import (
     _build_structured_content,
     _build_summary,
     _collect_input_paths,

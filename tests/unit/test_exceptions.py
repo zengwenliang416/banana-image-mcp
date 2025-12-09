@@ -12,7 +12,7 @@ This module tests:
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from nanobanana_mcp_server.core.exceptions import (
+from banana_image_mcp.core.exceptions import (
     ConfigurationError,
     ErrorCode,
     FileOperationError,

@@ -14,9 +14,9 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 import pytest
 
-from nanobanana_mcp_server.config.settings import ModelSelectionConfig, ModelTier
-from nanobanana_mcp_server.services.base_image_service import BaseImageService
-from nanobanana_mcp_server.services.model_selector import ModelSelector
+from banana_image_mcp.config.settings import ModelSelectionConfig, ModelTier
+from banana_image_mcp.services.base_image_service import BaseImageService
+from banana_image_mcp.services.model_selector import ModelSelector
 
 # =============================================================================
 # Hypothesis Strategies
