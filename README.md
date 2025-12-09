@@ -1,46 +1,47 @@
-# Banana Image MCP Server
+# Banana Image MCP
 
-A production-ready **Model Context Protocol (MCP)** server that provides AI-powered image generation capabilities through Google's **Gemini** models with intelligent model selection.
+<div align="center">
+
+**Let Claude Generate Images for You**
+
+[English](#english) | [中文](#中文)
+
+[![PyPI version](https://badge.fury.io/py/banana-image-mcp.svg)](https://badge.fury.io/py/banana-image-mcp)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+</div>
+
+---
+
+<a name="english"></a>
+
+## What is this?
+
+**Banana Image MCP** is an MCP server that gives Claude (and other AI assistants) the ability to generate images using Google's Gemini models.
+
+Simply tell Claude what image you want, and it will create it for you - from quick sketches to professional 4K artwork.
 
 ## Features
 
-- **Multi-Model AI Image Generation**: Intelligent selection between Flash (speed) and Pro (quality) models
-- **Gemini 2.5 Flash Image**: Fast generation (1024px) for rapid prototyping
-- **Gemini 3 Pro Image**: High-quality up to 4K with Google Search grounding
-- **Smart Model Selection**: Automatically chooses optimal model based on your prompt
-- **Aspect Ratio Control**: Specify output dimensions (1:1, 16:9, 9:16, 21:9, and more)
-- **Smart Templates**: Pre-built prompt templates for photography, design, and editing
-- **File Management**: Upload and manage files via Gemini Files API
-- **Resource Discovery**: Browse templates and file metadata through MCP resources
-- **Production Ready**: Comprehensive error handling, logging, and validation
-- **High Performance**: Optimized architecture with intelligent caching
+| Feature | Description |
+|---------|-------------|
+| **Dual Model Support** | Flash (fast, 2-3s) + Pro (4K quality, 5-8s) |
+| **Smart Auto-Selection** | Automatically picks the best model for your needs |
+| **4K Resolution** | Up to 3840px professional-grade output |
+| **Google Search Grounding** | Pro model uses real-world knowledge for accuracy |
+| **Flexible Aspect Ratios** | 1:1, 16:9, 9:16, 21:9, and more |
+| **Image Editing** | Edit existing images with AI |
 
 ## Quick Start
 
-### Prerequisites
+### 1. Get a Gemini API Key
 
-1. **Google Gemini API Key** - [Get one free here](https://makersuite.google.com/app/apikey)
-2. **Python 3.11+** (for development only)
+Get your free API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
 
-### Installation
+### 2. Install & Configure
 
-Using `uvx` (Recommended):
-
-```bash
-uvx banana-image-mcp
-```
-
-Using `pip`:
-
-```bash
-pip install banana-image-mcp
-```
-
-## Configuration
-
-### Claude Desktop
-
-Add to your `claude_desktop_config.json`:
+**For Claude Desktop**, add to `claude_desktop_config.json`:
 
 ```json
 {
@@ -49,40 +50,103 @@ Add to your `claude_desktop_config.json`:
       "command": "uvx",
       "args": ["banana-image-mcp"],
       "env": {
-        "GEMINI_API_KEY": "your-gemini-api-key-here"
+        "GEMINI_API_KEY": "your-api-key-here"
       }
     }
   }
 }
 ```
 
-**Configuration file locations:**
+<details>
+<summary>Config file location</summary>
 
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+</details>
 
-### Claude Code (VS Code Extension)
+<details>
+<summary>Other clients (Cursor, VS Code, etc.)</summary>
 
-Install and configure in VS Code:
+**Cursor / VS Code Claude Extension:**
+```json
+{
+  "mcpServers": {
+    "banana-image": {
+      "command": "uvx",
+      "args": ["banana-image-mcp"],
+      "env": {
+        "GEMINI_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+</details>
 
-1. Install the Claude Code extension
-2. Open Command Palette (`Cmd/Ctrl + Shift + P`)
-3. Run "Claude Code: Add MCP Server"
-4. Configure:
-   ```json
-   {
-     "name": "banana-image",
-     "command": "uvx",
-     "args": ["banana-image-mcp"],
-     "env": {
-       "GEMINI_API_KEY": "your-gemini-api-key-here"
-     }
-   }
-   ```
+### 3. Start Using
 
-### Cursor
+Just ask Claude to generate images:
 
-Add to Cursor's MCP configuration:
+> "Generate a cute cat wearing a space suit"
+>
+> "Create a professional product photo of a coffee cup, 4K quality"
+>
+> "Make a 16:9 thumbnail for my YouTube video about cooking"
+
+## Models
+
+| Model | Speed | Max Resolution | Best For |
+|-------|-------|----------------|----------|
+| **Flash** | 2-3s | 1024px | Quick drafts, iterations, prototypes |
+| **Pro** | 5-8s | 4K (3840px) | Final assets, marketing, professional work |
+
+The server automatically selects the best model, or you can specify:
+- Say "quick sketch" or "draft" → Flash
+- Say "4K", "professional", or "high quality" → Pro
+
+## Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `GEMINI_API_KEY` | Yes | - | Your Gemini API key |
+| `IMAGE_OUTPUT_DIR` | No | `~/banana-images` | Where to save images |
+
+## Links
+
+- [PyPI Package](https://pypi.org/project/banana-image-mcp/)
+- [GitHub Repository](https://github.com/zengwenliang416/banana-image-mcp)
+- [Report Issues](https://github.com/zengwenliang416/banana-image-mcp/issues)
+
+---
+
+<a name="中文"></a>
+
+## 这是什么？
+
+**Banana Image MCP** 是一个 MCP 服务器，让 Claude（及其他 AI 助手）能够使用 Google Gemini 模型生成图片。
+
+只需告诉 Claude 你想要什么图片，它就会为你创建 - 从快速草图到专业级 4K 作品。
+
+## 功能特性
+
+| 功能 | 说明 |
+|------|------|
+| **双模型支持** | Flash（快速，2-3秒）+ Pro（4K画质，5-8秒）|
+| **智能自动选择** | 根据需求自动选择最佳模型 |
+| **4K 分辨率** | 最高 3840px 专业级输出 |
+| **Google 搜索增强** | Pro 模型利用真实世界知识提升准确性 |
+| **灵活宽高比** | 1:1、16:9、9:16、21:9 等多种比例 |
+| **图片编辑** | 使用 AI 编辑现有图片 |
+
+## 快速开始
+
+### 1. 获取 Gemini API Key
+
+从 [Google AI Studio](https://makersuite.google.com/app/apikey) 免费获取 API Key
+
+### 2. 安装配置
+
+**Claude Desktop 用户**，编辑 `claude_desktop_config.json`：
 
 ```json
 {
@@ -91,126 +155,60 @@ Add to Cursor's MCP configuration:
       "command": "uvx",
       "args": ["banana-image-mcp"],
       "env": {
-        "GEMINI_API_KEY": "your-gemini-api-key-here"
+        "GEMINI_API_KEY": "你的API密钥"
       }
     }
   }
 }
 ```
 
-## Model Selection
+<details>
+<summary>配置文件位置</summary>
 
-Banana Image MCP supports two Gemini models with intelligent automatic selection:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+</details>
 
-### Pro Model (Gemini 3 Pro Image)
+### 3. 开始使用
 
-- **Quality**: Professional-grade, production-ready
-- **Resolution**: Up to 4K (3840px)
-- **Speed**: ~5-8 seconds per image
-- **Special Features**:
-  - Google Search Grounding for accurate, contextual images
-  - Advanced Reasoning with configurable thinking levels
-  - Superior Text Rendering
-- **Best for**: Production assets, marketing materials, professional photography
+直接让 Claude 生成图片：
 
-### Flash Model (Gemini 2.5 Flash Image)
+> "生成一只穿着宇航服的可爱猫咪"
+>
+> "创建一张咖啡杯的专业产品照片，4K 画质"
+>
+> "制作一个 16:9 的 YouTube 烹饪视频缩略图"
 
-- **Speed**: Very fast (2-3 seconds)
-- **Resolution**: Up to 1024px
-- **Quality**: High quality for everyday use
-- **Best for**: Rapid prototyping, iterations, drafts, sketches
+## 模型对比
 
-### Automatic Selection (Recommended)
+| 模型 | 速度 | 最大分辨率 | 适用场景 |
+|------|------|-----------|----------|
+| **Flash** | 2-3秒 | 1024px | 快速草图、迭代、原型 |
+| **Pro** | 5-8秒 | 4K (3840px) | 成品、营销素材、专业作品 |
 
-By default, the server uses **AUTO** mode which intelligently analyzes your prompt:
+服务器会自动选择最佳模型，你也可以指定：
+- 说 "快速草图" 或 "草稿" → 使用 Flash
+- 说 "4K"、"专业" 或 "高质量" → 使用 Pro
 
-**Pro Model Selected When**:
-- Quality keywords: "4K", "professional", "production", "high-res"
-- High resolution requested: `resolution="4k"`
-- Google Search grounding enabled
-- High thinking level requested
+## 环境变量
 
-**Flash Model Selected When**:
-- Speed keywords: "quick", "draft", "sketch", "rapid"
-- High-volume batch generation
-- Standard resolution requested
+| 变量 | 必填 | 默认值 | 说明 |
+|------|------|--------|------|
+| `GEMINI_API_KEY` | 是 | - | Gemini API 密钥 |
+| `IMAGE_OUTPUT_DIR` | 否 | `~/banana-images` | 图片保存目录 |
 
-### Usage Examples
+## 相关链接
 
-```python
-# Automatic selection (recommended)
-"Generate a professional 4K product photo"  # Pro model
-"Quick sketch of a cat"                     # Flash model
+- [PyPI 包](https://pypi.org/project/banana-image-mcp/)
+- [GitHub 仓库](https://github.com/zengwenliang416/banana-image-mcp)
+- [问题反馈](https://github.com/zengwenliang416/banana-image-mcp/issues)
 
-# Explicit model selection
-generate_image(
-    prompt="A scenic landscape",
-    model_tier="flash"  # Force Flash model
-)
+---
 
-# Pro model with all features
-generate_image(
-    prompt="Professional product photo",
-    model_tier="pro",
-    resolution="4k",
-    thinking_level="HIGH",
-    enable_grounding=True
-)
+<div align="center">
 
-# Aspect ratio control
-generate_image(
-    prompt="Cinematic landscape",
-    aspect_ratio="21:9"  # Ultra-wide format
-)
-```
+**Made with by [Wenliang Zeng](https://github.com/zengwenliang416)**
 
-### Aspect Ratio Control
+MIT License
 
-Supported aspect ratios:
-- `1:1` - Square (Instagram, profile pictures)
-- `4:3` - Classic photo format
-- `3:4` - Portrait orientation
-- `16:9` - Widescreen (YouTube thumbnails)
-- `9:16` - Mobile portrait (phone wallpapers)
-- `21:9` - Ultra-wide cinematic
-- `2:3`, `3:2`, `4:5`, `5:4` - Various photo formats
-
-## Environment Variables
-
-```bash
-# Required
-GEMINI_API_KEY=your-gemini-api-key-here
-
-# Model Selection (optional)
-BANANA_IMAGE_MODEL=auto  # Options: flash, pro, auto (default: auto)
-
-# Optional
-IMAGE_OUTPUT_DIR=/path/to/image/directory  # Default: ~/banana-images
-LOG_LEVEL=INFO                             # DEBUG, INFO, WARNING, ERROR
-```
-
-## Development
-
-```bash
-# Clone repository
-git clone https://github.com/zengwenliang416/banana-image-mcp.git
-cd banana-image-mcp
-
-# Install with uv
-uv sync
-
-# Set environment
-export GEMINI_API_KEY=your-api-key-here
-
-# Run locally
-uv run python -m banana_image_mcp.server
-```
-
-## License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
-## Support
-
-- **Issues**: [GitHub Issues](https://github.com/zengwenliang416/banana-image-mcp/issues)
-- **Author**: Wenliang Zeng
+</div>
