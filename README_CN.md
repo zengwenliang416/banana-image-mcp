@@ -91,6 +91,36 @@
 
 </details>
 
+<details>
+<summary><strong>更新到最新版本</strong></summary>
+
+使用 `uvx` 时，包会被缓存到本地。要获取最新版本：
+
+```bash
+# 清除该包的缓存
+uv cache clean banana-image-mcp
+
+# 然后重启 MCP 客户端（Claude Desktop 等）
+```
+
+或者指定具体版本：
+
+```json
+{
+  "mcpServers": {
+    "banana-image": {
+      "command": "uvx",
+      "args": ["banana-image-mcp==0.1.2"],
+      "env": {
+        "GEMINI_API_KEY": "你的API密钥"
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ### 3. 开始创作
 
 直接让 Claude 生成图片：

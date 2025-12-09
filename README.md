@@ -91,6 +91,36 @@ The configuration is similar for other MCP-compatible clients:
 
 </details>
 
+<details>
+<summary><strong>Updating to the latest version</strong></summary>
+
+When using `uvx`, packages are cached locally. To get the latest version after an update:
+
+```bash
+# Clear the cache for this package
+uv cache clean banana-image-mcp
+
+# Then restart your MCP client (Claude Desktop, etc.)
+```
+
+Or specify a version explicitly:
+
+```json
+{
+  "mcpServers": {
+    "banana-image": {
+      "command": "uvx",
+      "args": ["banana-image-mcp==0.1.2"],
+      "env": {
+        "GEMINI_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ### 3. Start Creating
 
 Just ask Claude to generate images:
