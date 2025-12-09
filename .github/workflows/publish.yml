@@ -70,14 +70,11 @@ jobs:
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
 
-      - name: Create Git tag
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          # 检查 tag 是否已存在
-          if git rev-parse "v${{ needs.check-version.outputs.version }}" >/dev/null 2>&1; then
-            echo "Tag v${{ needs.check-version.outputs.version }} already exists, skipping"
-          else
-            git tag -a "v${{ needs.check-version.outputs.version }}" -m "Release v${{ needs.check-version.outputs.version }}"
-            git push origin "v${{ needs.check-version.outputs.version }}"
-          fi
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.check-version.outputs.version }}
+          name: Release v${{ needs.check-version.outputs.version }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
