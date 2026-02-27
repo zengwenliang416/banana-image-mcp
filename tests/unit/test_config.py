@@ -172,7 +172,7 @@ class TestBaseModelConfigInheritance:
         assert config.request_timeout == 60
 
         # Flash-specific fields
-        assert config.model_name == "gemini-2.5-flash-image"
+        assert config.model_name == "gemini-3.1-flash-image-preview"
         assert config.max_resolution == 1024
         assert config.supports_thinking is False
 

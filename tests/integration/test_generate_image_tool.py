@@ -438,8 +438,8 @@ class TestGenerateImageToolIntegration:
         ]
 
         model_info = {
-            "name": "Gemini 2.5 Flash Image",
-            "model_id": "gemini-2.5-flash-image",
+            "name": "Gemini 3.1 Flash Image",
+            "model_id": "gemini-3.1-flash-image-preview",
             "tier": "flash",
             "emoji": "⚡",
         }
@@ -466,7 +466,7 @@ class TestGenerateImageToolIntegration:
         # Verify required fields
         assert content["mode"] == "generate"
         assert content["model_tier"] == "flash"
-        assert content["model_name"] == "Gemini 2.5 Flash Image"
+        assert content["model_name"] == "Gemini 3.1 Flash Image"
         assert content["requested"] == 2
         assert content["returned"] == 2
         assert content["aspect_ratio"] == "16:9"
@@ -513,8 +513,8 @@ class TestGenerateImageToolIntegration:
             ]
 
             model_info = {
-                "name": "Gemini 2.5 Flash Image",
-                "model_id": "gemini-2.5-flash-image",
+                "name": "Gemini 3.1 Flash Image",
+                "model_id": "gemini-3.1-flash-image-preview",
                 "tier": "flash",
                 "emoji": "⚡",
             }

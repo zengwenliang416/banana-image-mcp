@@ -59,7 +59,7 @@ def mock_gemini_config() -> GeminiConfig:
         GeminiConfig with default settings.
     """
     return GeminiConfig(
-        model_name="gemini-2.5-flash-image",
+        model_name="gemini-3.1-flash-image-preview",
         max_images_per_request=4,
         max_inline_image_size=20 * 1024 * 1024,
         default_image_format="png",
@@ -75,7 +75,7 @@ def mock_flash_config() -> FlashImageConfig:
         FlashImageConfig with default Flash model settings.
     """
     return FlashImageConfig(
-        model_name="gemini-2.5-flash-image",
+        model_name="gemini-3.1-flash-image-preview",
         max_images_per_request=4,
         max_inline_image_size=20 * 1024 * 1024,
         default_image_format="png",
@@ -236,7 +236,7 @@ def mock_stored_image_info() -> StoredImageInfo:
         thumbnail_height=192,
         metadata={
             "prompt": "test prompt",
-            "model": "gemini-2.5-flash-image",
+            "model": "gemini-3.1-flash-image-preview",
         },
     )
 

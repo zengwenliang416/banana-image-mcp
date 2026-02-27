@@ -115,7 +115,7 @@ class TestFlashServiceBehaviorConsistency:
 
     *For any* FlashImageService instance and any valid generation parameters:
     - `_build_generation_config()` SHALL return an empty dictionary
-    - `_build_metadata()` SHALL include "model_tier": "flash" and "model": "gemini-2.5-flash-image"
+    - `_build_metadata()` SHALL include "model_tier": "flash" and "model": "gemini-3.1-flash-image-preview"
     - `_enhance_prompt(prompt)` SHALL return the original prompt unchanged
     """
 
@@ -158,7 +158,7 @@ class TestFlashServiceBehaviorConsistency:
         """
         **Feature: service-layer-refactoring, Property 2: Flash Service Behavior Consistency**
 
-        _build_metadata() should include model_tier="flash" and model="gemini-2.5-flash-image".
+        _build_metadata() should include model_tier="flash" and model="gemini-3.1-flash-image-preview".
         """
         metadata = flash_service._build_metadata(
             prompt=prompt,
@@ -168,7 +168,7 @@ class TestFlashServiceBehaviorConsistency:
 
         # Required fields
         assert metadata["model_tier"] == "flash"
-        assert metadata["model"] == "gemini-2.5-flash-image"
+        assert metadata["model"] == "gemini-3.1-flash-image-preview"
         assert metadata["synthid_watermark"] is True
 
         # Passed parameters

@@ -214,6 +214,51 @@ class TestInputValidation:
             # Should not raise
             _validate_inputs("auto", [path], None)
 
+    def test_tilde_path_expansion(self, monkeypatch, tmp_path):
+        """
+        **Feature: service-layer-refactoring, Property 7: Input Validation**
+
+        Should correctly expand ~ paths to home directory.
+        Validates fix for: os.path.exists() doesn't expand ~ automatically.
+        """
+        # 创建临时目录作为模拟的 HOME
+        fake_home = tmp_path / "fake_home"
+        fake_home.mkdir()
+
+        # 创建测试图片文件
+        test_image = fake_home / "test_image.png"
+        test_image.write_bytes(b"fake image data")
+
+        # 设置 HOME 环境变量
+        monkeypatch.setenv("HOME", str(fake_home))
+
+        # 使用 ~ 路径, 应该能正确展开并验证
+        tilde_path = "~/test_image.png"
+
+        # 应该不抛出异常 (路径存在)
+        _validate_inputs("auto", [tilde_path], None)
+
+    def test_tilde_path_nonexistent_raises_error(self, monkeypatch, tmp_path):
+        """
+        **Feature: service-layer-refactoring, Property 7: Input Validation**
+
+        Should raise error for non-existent ~ paths after expansion.
+        """
+        # 创建临时目录作为模拟的 HOME
+        fake_home = tmp_path / "fake_home"
+        fake_home.mkdir()
+
+        # 设置 HOME 环境变量
+        monkeypatch.setenv("HOME", str(fake_home))
+
+        # 使用不存在的 ~ 路径
+        tilde_path = "~/nonexistent_image.png"
+
+        with pytest.raises(ValidationError) as exc_info:
+            _validate_inputs("auto", [tilde_path], None)
+
+        assert "not found" in str(exc_info.value).lower()
+
 
 # =============================================================================
 # Property 8: Mode Detection
@@ -330,7 +375,7 @@ class TestResponseBuilding:
         return {
             "name": "Gemini Flash",
             "emoji": "⚡",
-            "model_id": "gemini-2.5-flash-image",
+            "model_id": "gemini-3.1-flash-image-preview",
         }
 
     def test_build_summary_contains_required_info(self, sample_metadata, sample_model_info):
@@ -451,3 +496,70 @@ class TestResponseBuilding:
         else:
             assert content["generation_prompt"] == "test prompt"
             assert content["edit_instruction"] is None
+
+    def test_build_summary_pro_with_none_params(self, sample_metadata, sample_model_info):
+        """
+        **Feature: service-layer-refactoring, Property 10: Response Building**
+
+        Pro model summary should use default values when thinking_level/resolution are None.
+        Validates fix for: summary should never display 'None' for these fields.
+        """
+        # 使用 Pro 模型信息
+        pro_model_info = {
+            "name": "Gemini Pro",
+            "emoji": "🚀",
+            "model_id": "gemini-3-pro-image",
+        }
+
+        summary = _build_summary(
+            mode="generate",
+            metadata=sample_metadata,
+            model_info=pro_model_info,
+            selected_tier=ModelTier.PRO,
+            thinking_level=None,  # 显式传入 None
+            resolution=None,  # 显式传入 None
+            enable_grounding=True,
+            file_id=None,
+            input_paths=None,
+            aspect_ratio=None,
+        )
+
+        # 摘要不应包含 'None' 字符串
+        assert "None" not in summary, f"Summary should not contain 'None': {summary}"
+
+        # 应使用默认值
+        assert "high" in summary.lower() or "Thinking Level" in summary
+        assert "4k" in summary.lower() or "Resolution" in summary
+
+        # Pro 模型标识应存在
+        assert "PRO" in summary or "Pro" in summary
+
+    def test_build_summary_pro_with_explicit_values(self, sample_metadata, sample_model_info):
+        """
+        **Feature: service-layer-refactoring, Property 10: Response Building**
+
+        Pro model summary should display explicit values when provided.
+        """
+        pro_model_info = {
+            "name": "Gemini Pro",
+            "emoji": "🚀",
+            "model_id": "gemini-3-pro-image",
+        }
+
+        summary = _build_summary(
+            mode="generate",
+            metadata=sample_metadata,
+            model_info=pro_model_info,
+            selected_tier=ModelTier.PRO,
+            thinking_level="low",
+            resolution="2k",
+            enable_grounding=False,
+            file_id=None,
+            input_paths=None,
+            aspect_ratio="16:9",
+        )
+
+        # 应显示明确设置的值
+        assert "low" in summary.lower()
+        assert "2k" in summary.lower()
+        assert "16:9" in summary
