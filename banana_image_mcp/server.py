@@ -3,7 +3,7 @@
 Nano Banana MCP Server - Main Entry Point
 
 A production-ready FastMCP server that provides AI-powered image generation and editing
-capabilities through Google's Gemini 2.5 Flash Image model.
+capabilities through Google's Gemini 3.1 Flash Image model.
 """
 
 import logging

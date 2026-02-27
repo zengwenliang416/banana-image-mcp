@@ -11,7 +11,7 @@ from .image_storage_service import ImageStorageService
 class FlashImageService(BaseImageService):
     """Gemini Flash image service for speed-optimized generation.
 
-    Uses Gemini 2.5 Flash Image model for fast image generation
+    Uses Gemini 3.1 Flash Image model for fast image generation
     with lower latency and high throughput.
     """
 
@@ -70,7 +70,7 @@ class FlashImageService(BaseImageService):
             Metadata dictionary with Flash-specific fields
         """
         return {
-            "model": "gemini-2.5-flash-image",
+            "model": "gemini-3.1-flash-image-preview",
             "model_tier": "flash",
             "response_index": response_index,
             "image_index": image_index,

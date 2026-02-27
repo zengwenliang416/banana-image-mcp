@@ -28,7 +28,7 @@ class NanoBananaMCP:
         """Get server description and instructions."""
         return (
             "This server exposes image generation & editing powered by "
-            "Gemini 2.5 Flash Image (aka 'nano banana'). It returns images "
+            "Gemini 3.1 Flash Image (aka 'nano banana'). It returns images "
             "as real MCP image content blocks, and also provides structured "
             "JSON with metadata and reproducibility hints."
         )

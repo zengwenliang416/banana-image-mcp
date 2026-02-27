@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 class ModelTier(str, Enum):
     """Model selection options."""
 
-    FLASH = "flash"  # Speed-optimized (Gemini 2.5 Flash)
+    FLASH = "flash"  # Speed-optimized (Gemini 3.1 Flash)
     PRO = "pro"  # Quality-optimized (Gemini 3 Pro)
     AUTO = "auto"  # Automatic selection
 
@@ -83,9 +83,9 @@ class BaseModelConfig:
 
 @dataclass
 class FlashImageConfig(BaseModelConfig):
-    """Gemini 2.5 Flash Image configuration (speed-optimized)."""
+    """Gemini 3.1 Flash Image configuration (speed-optimized)."""
 
-    model_name: str = "gemini-2.5-flash-image"
+    model_name: str = "gemini-3.1-flash-image-preview"
     max_resolution: int = 1024
     supports_thinking: bool = False
     supports_grounding: bool = False
@@ -163,7 +163,7 @@ class ModelSelectionConfig:
 class GeminiConfig:
     """Legacy Gemini API configuration (backward compatibility)."""
 
-    model_name: str = "gemini-2.5-flash-image"
+    model_name: str = "gemini-3.1-flash-image-preview"
     max_images_per_request: int = 4
     max_inline_image_size: int = 20 * 1024 * 1024  # 20MB
     default_image_format: str = "png"
