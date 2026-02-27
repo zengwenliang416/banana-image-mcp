@@ -1,7 +1,17 @@
-import base64
+"""generate_image 工具 - MCP 图像生成与编辑的主入口。
+
+该模块是 generate_image 工具的主入口，负责：
+1. 注册 FastMCP 工具
+2. 协调各子模块完成图像生成/编辑流程
+
+子模块职责：
+- generate_image_inputs: 输入收集、验证、加载
+- generate_image_mode: 操作模式自动检测
+- generate_image_model: 模型智能选择
+- generate_image_response: 响应构建
+"""
+
 import logging
-import mimetypes
-import os
 from typing import Annotated, Literal
 
 from fastmcp import Context, FastMCP
@@ -9,9 +19,24 @@ from fastmcp.tools.tool import ToolResult
 from mcp.types import TextContent
 from pydantic import Field
 
-from ..config.constants import MAX_INPUT_IMAGES
+from ..config.constants import MAX_INPUT_IMAGE_SIZE_BYTES
 from ..config.settings import ModelTier, ThinkingLevel
 from ..core.exceptions import ValidationError
+from ..services import get_model_selector
+
+# 从子模块导入
+from .generate_image_inputs import (
+    collect_input_paths,
+    load_input_images,
+    validate_inputs,
+)
+from .generate_image_mode import detect_mode
+from .generate_image_model import select_model
+from .generate_image_response import (
+    build_error_response,
+    build_structured_content,
+    build_summary,
+)
 
 
 def register_generate_image_tool(server: FastMCP):
@@ -124,8 +149,8 @@ def register_generate_image_tool(server: FastMCP):
         logger = logging.getLogger(__name__)
 
         try:
-            # 1. Collect input paths
-            input_image_paths = _collect_input_paths(
+            # 1. 收集输入路径
+            input_image_paths = collect_input_paths(
                 input_image_path_1, input_image_path_2, input_image_path_3
             )
 
@@ -134,13 +159,13 @@ def register_generate_image_tool(server: FastMCP):
                 f"paths={input_image_paths}, model_tier={model_tier}, aspect_ratio={aspect_ratio}"
             )
 
-            # 2. Validate inputs
-            _validate_inputs(mode, input_image_paths, file_id)
+            # 2. 验证输入
+            validate_inputs(mode, input_image_paths, file_id)
 
-            # 3. Detect mode
-            detected_mode = _detect_mode(mode, file_id, input_image_paths)
+            # 3. 检测模式
+            detected_mode = detect_mode(mode, file_id, input_image_paths)
 
-            # 4. Validate thinking level
+            # 4. 验证思考深度
             try:
                 if thinking_level:
                     _ = ThinkingLevel(thinking_level)
@@ -148,8 +173,12 @@ def register_generate_image_tool(server: FastMCP):
                 logger.warning(f"Invalid thinking_level '{thinking_level}', defaulting to HIGH")
                 thinking_level = "high"
 
-            # 5. Select model
-            selected_service, selected_tier, model_info = _select_model(
+            # 5. 选择模型
+            # 注意：select_model 返回的 service 被丢弃，因为 EnhancedImageService 是唯一
+            # 实现完整 workflow.md 流程的服务（Files API 上传、数据库记录、缩略图生成）。
+            # EnhancedImageService 内部始终使用 Pro gemini_client。
+            # 此处调用 select_model 仅为获取 model_info 用于报告。
+            _selected_service, selected_tier, model_info = select_model(
                 prompt=prompt,
                 model_tier=model_tier,
                 n=n,
@@ -160,13 +189,23 @@ def register_generate_image_tool(server: FastMCP):
                 logger=logger,
             )
 
-            # Parse tier for structured content
+            # 如果用户请求 Flash 但实际使用 Pro，记录警告
+            if selected_tier == ModelTier.FLASH:
+                logger.warning(
+                    "Flash model requested but EnhancedImageService uses Pro model. "
+                    "Using Pro model for full workflow support."
+                )
+                # 覆盖为 Pro 以保持报告一致性
+                selected_tier = ModelTier.PRO
+                model_info = get_model_selector().get_model_info(ModelTier.PRO)
+
+            # 解析层级用于结构化内容
             try:
                 tier = ModelTier(model_tier) if model_tier else ModelTier.AUTO
             except ValueError:
                 tier = ModelTier.AUTO
 
-            # Mode-specific validation
+            # 模式特定验证
             if detected_mode == "edit":
                 if not file_id and not input_image_paths:
                     raise ValidationError("Edit mode requires either file_id or input_image_paths")
@@ -174,39 +213,52 @@ def register_generate_image_tool(server: FastMCP):
                     raise ValidationError(
                         "Edit mode with file_id supports only additional input images, not multiple primary inputs"
                     )
+                # 编辑模式只支持单张输入图片（无 file_id 时）
+                if not file_id and input_image_paths and len(input_image_paths) > 1:
+                    raise ValidationError(
+                        f"Edit mode supports only 1 input image, got {len(input_image_paths)}. "
+                        "Use 'generate' mode for multi-image conditioning."
+                    )
 
-            # Get enhanced image service (would be injected in real implementation)
+            # 获取增强图像服务
             enhanced_image_service = _get_enhanced_image_service()
 
-            # Execute based on detected mode
+            # 根据检测到的模式执行
             if detected_mode == "edit" and file_id:
-                # Edit by file_id following workflows.md sequence
+                # 通过 file_id 编辑
                 logger.info(f"Edit mode: using file_id {file_id}")
+                # 警告：file_id 模式下 input_image_paths 会被忽略
+                if input_image_paths:
+                    logger.warning(
+                        f"file_id provided, input_image_paths ({input_image_paths}) will be ignored. "
+                        "Edit by file_id does not support additional input images."
+                    )
                 thumbnail_images, metadata = enhanced_image_service.edit_image_by_file_id(
                     file_id=file_id, edit_prompt=prompt
                 )
 
             elif detected_mode == "edit" and input_image_paths and len(input_image_paths) == 1:
-                # Edit by file path
+                # 通过文件路径编辑
                 logger.info(f"Edit mode: using file path {input_image_paths[0]}")
                 thumbnail_images, metadata = enhanced_image_service.edit_image_by_path(
                     instruction=prompt, file_path=input_image_paths[0]
                 )
 
             else:
-                # Generation mode (with optional input images for conditioning)
+                # 生成模式（可选择性使用输入图片进行条件生成）
                 logger.info("Generate mode: creating new images")
                 if aspect_ratio:
                     logger.info(f"Using aspect ratio override: {aspect_ratio}")
 
-                # Prepare input images by reading from file paths
+                # 从文件路径读取输入图片
                 input_images = None
                 if input_image_paths:
-                    input_images = _load_input_images(input_image_paths, logger)
+                    input_images = load_input_images(
+                        input_image_paths, logger, max_size_bytes=MAX_INPUT_IMAGE_SIZE_BYTES
+                    )
                     logger.info(f"Loaded {len(input_images)} input images from file paths")
 
-                # Generate images following workflows.md pattern:
-                # M->G->FS->F->D (save full-res, create thumbnail, upload to Files API, track in DB)
+                # 生成图片
                 thumbnail_images, metadata = enhanced_image_service.generate_images(
                     prompt=prompt,
                     n=n,
@@ -217,16 +269,16 @@ def register_generate_image_tool(server: FastMCP):
                     resolution=resolution,
                 )
 
-            # Create response with file paths and thumbnails
+            # 构建响应
             if metadata:
-                # Filter out any None entries from metadata (defensive programming)
+                # 过滤无效的元数据条目
                 metadata = [m for m in metadata if m is not None and isinstance(m, dict)]
 
                 if not metadata:
-                    return _build_error_response(detected_mode, prompt)
+                    return build_error_response(detected_mode, prompt)
 
-                # Build summary using helper function
-                full_summary = _build_summary(
+                # 构建摘要
+                full_summary = build_summary(
                     mode=detected_mode,
                     metadata=metadata,
                     model_info=model_info,
@@ -241,12 +293,12 @@ def register_generate_image_tool(server: FastMCP):
 
                 content = [TextContent(type="text", text=full_summary), *thumbnail_images]
             else:
-                # Fallback if no images generated
+                # 无图片生成时的回退
                 summary = "❌ No images were generated. Please check the logs for details."
                 content = [TextContent(type="text", text=summary)]
 
-            # Build structured content using helper function
-            structured_content = _build_structured_content(
+            # 构建结构化内容
+            structured_content = build_structured_content(
                 mode=detected_mode,
                 metadata=metadata,
                 model_info=model_info,
@@ -281,389 +333,39 @@ def register_generate_image_tool(server: FastMCP):
 
 
 def _get_enhanced_image_service():
-    """Get the enhanced image service instance."""
+    """获取增强图像服务实例。"""
     from ..services import get_enhanced_image_service
 
     return get_enhanced_image_service()
 
 
 # ============================================================================
-# Helper functions for generate_image tool
+# 向后兼容的重导出（供测试和外部代码使用）
 # ============================================================================
 
+# 从子模块重导出私有函数别名
+from .generate_image_inputs import (  # noqa: E402
+    _collect_input_paths,
+    _load_input_images,
+    _validate_inputs,
+)
+from .generate_image_mode import _detect_mode  # noqa: E402
+from .generate_image_model import _select_model  # noqa: E402
+from .generate_image_response import (  # noqa: E402
+    _build_error_response,
+    _build_structured_content,
+    _build_summary,
+)
 
-def _collect_input_paths(
-    path1: str | None,
-    path2: str | None,
-    path3: str | None,
-) -> list[str] | None:
-    """Collect non-None input image paths into a list.
-
-    Args:
-        path1: First optional path
-        path2: Second optional path
-        path3: Third optional path
-
-    Returns:
-        List of non-None paths, or None if all are None
-    """
-    paths = [p for p in [path1, path2, path3] if p]
-    return paths if paths else None
-
-
-def _validate_inputs(
-    mode: str,
-    input_paths: list[str] | None,
-    file_id: str | None,
-) -> None:
-    """Validate input parameters.
-
-    Args:
-        mode: Operation mode
-        input_paths: List of input image paths
-        file_id: Files API file ID
-
-    Raises:
-        ValidationError: If validation fails
-    """
-    from ..core.exceptions import ErrorCode
-
-    # Validate mode
-    if mode not in ["auto", "generate", "edit"]:
-        raise ValidationError(
-            "Mode must be 'auto', 'generate', or 'edit'",
-            error_code=ErrorCode.VALIDATION_INVALID_MODE,
-            field="mode",
-            value=mode,
-        )
-
-    # Validate input paths
-    if input_paths:
-        if len(input_paths) > MAX_INPUT_IMAGES:
-            raise ValidationError(
-                f"Maximum {MAX_INPUT_IMAGES} input images allowed",
-                error_code=ErrorCode.VALIDATION_FILE_COUNT_EXCEEDED,
-                field="input_image_paths",
-                value=len(input_paths),
-            )
-
-        for i, path in enumerate(input_paths):
-            if not os.path.exists(path):
-                raise ValidationError(
-                    f"Input image {i + 1} not found: {path}",
-                    error_code=ErrorCode.FILE_NOT_FOUND,
-                    field=f"input_image_path_{i + 1}",
-                    value=path,
-                )
-            if not os.path.isfile(path):
-                raise ValidationError(
-                    f"Input image {i + 1} is not a file: {path}",
-                    error_code=ErrorCode.VALIDATION_INVALID_PATH,
-                    field=f"input_image_path_{i + 1}",
-                    value=path,
-                )
-
-
-def _detect_mode(
-    mode: str,
-    file_id: str | None,
-    input_paths: list[str] | None,
-) -> str:
-    """Detect operation mode based on inputs.
-
-    Args:
-        mode: Requested mode ("auto", "generate", or "edit")
-        file_id: Files API file ID
-        input_paths: List of input image paths
-
-    Returns:
-        Detected mode ("generate" or "edit")
-    """
-    if mode != "auto":
-        return mode
-
-    # Auto-detect based on inputs
-    if file_id or (input_paths and len(input_paths) == 1):
-        return "edit"
-    return "generate"
-
-
-def _select_model(
-    prompt: str,
-    model_tier: str | None,
-    n: int,
-    resolution: str | None,
-    thinking_level: str | None,
-    enable_grounding: bool,
-    input_paths: list[str] | None,
-    logger: logging.Logger,
-) -> tuple[any, ModelTier, dict]:
-    """Select appropriate model based on parameters.
-
-    Args:
-        prompt: Generation prompt
-        model_tier: Requested model tier
-        n: Number of images
-        resolution: Output resolution
-        thinking_level: Thinking level for Pro model
-        enable_grounding: Whether to enable grounding
-        input_paths: Input image paths
-        logger: Logger instance
-
-    Returns:
-        Tuple of (service, selected_tier, model_info)
-    """
-    from ..services import get_model_selector
-
-    # Parse model tier
-    try:
-        tier = ModelTier(model_tier) if model_tier else ModelTier.AUTO
-    except ValueError:
-        logger.warning(f"Invalid model_tier '{model_tier}', defaulting to AUTO")
-        tier = ModelTier.AUTO
-
-    model_selector = get_model_selector()
-
-    selected_service, selected_tier = model_selector.select_model(
-        prompt=prompt,
-        requested_tier=tier,
-        n=n,
-        resolution=resolution,
-        input_images=input_paths,
-        thinking_level=thinking_level,
-        enable_grounding=enable_grounding,
-    )
-
-    model_info = model_selector.get_model_info(selected_tier)
-    logger.info(
-        f"Selected {model_info['emoji']} {model_info['name']} "
-        f"({selected_tier.value}) for this request"
-    )
-
-    return selected_service, selected_tier, model_info
-
-
-def _load_input_images(
-    paths: list[str],
-    logger: logging.Logger,
-) -> list[tuple[str, str]]:
-    """Load input images from file paths.
-
-    Args:
-        paths: List of file paths
-        logger: Logger instance
-
-    Returns:
-        List of (base64_data, mime_type) tuples
-
-    Raises:
-        ValidationError: If loading fails
-    """
-    from ..core.exceptions import ErrorCode
-
-    images = []
-    for path in paths:
-        try:
-            with open(path, "rb") as f:
-                image_bytes = f.read()
-
-            mime_type, _ = mimetypes.guess_type(path)
-            if not mime_type or not mime_type.startswith("image/"):
-                mime_type = "image/png"
-
-            base64_data = base64.b64encode(image_bytes).decode("utf-8")
-            images.append((base64_data, mime_type))
-
-            logger.debug(f"Loaded input image: {path} ({mime_type})")
-
-        except Exception as e:
-            raise ValidationError(
-                f"Failed to load input image {path}: {e}",
-                error_code=ErrorCode.FILE_READ_FAILED,
-                field="input_image_path",
-                value=path,
-                cause=e,
-            ) from e
-
-    return images
-
-
-def _build_summary(
-    mode: str,
-    metadata: list[dict],
-    model_info: dict,
-    selected_tier: ModelTier,
-    thinking_level: str | None,
-    resolution: str | None,
-    enable_grounding: bool,
-    file_id: str | None,
-    input_paths: list[str] | None,
-    aspect_ratio: str | None,
-) -> str:
-    """Build summary text for response.
-
-    Args:
-        mode: Operation mode
-        metadata: List of image metadata
-        model_info: Model information dict
-        selected_tier: Selected model tier
-        thinking_level: Thinking level used
-        resolution: Resolution used
-        enable_grounding: Whether grounding was enabled
-        file_id: Source file ID (for edits)
-        input_paths: Input image paths
-        aspect_ratio: Aspect ratio used
-
-    Returns:
-        Summary text string
-    """
-    action_verb = "Edited" if mode == "edit" else "Generated"
-    model_name = model_info["name"]
-    model_emoji = model_info["emoji"]
-
-    lines = [
-        f"✅ {action_verb} {len(metadata)} image(s) with {model_emoji} {model_name}.",
-        f"📊 **Model**: {selected_tier.value.upper()} tier",
-    ]
-
-    # Pro-specific information
-    if selected_tier == ModelTier.PRO:
-        lines.append(f"🧠 **Thinking Level**: {thinking_level}")
-        lines.append(f"📏 **Resolution**: {resolution}")
-        if enable_grounding:
-            lines.append("🔍 **Grounding**: Enabled (Google Search)")
-    lines.append("")
-
-    # Source information
-    if mode == "edit":
-        if file_id:
-            lines.append(f"📎 **Edit Source**: Files API {file_id}")
-        elif input_paths and len(input_paths) == 1:
-            lines.append(f"📁 **Edit Source**: {input_paths[0]}")
-    elif input_paths:
-        lines.append(
-            f"🖼️ Conditioned on {len(input_paths)} input image(s): {', '.join(input_paths)}"
-        )
-    if aspect_ratio and mode == "generate":
-        lines.append(f"📐 Aspect ratio: {aspect_ratio}")
-
-    # File information
-    result_label = "Edited Images" if mode == "edit" else "Generated Images"
-    lines.append(f"\n📁 **{result_label}:**")
-
-    for i, meta in enumerate(metadata, 1):
-        if not meta or not isinstance(meta, dict):
-            lines.append(f"  {i}. ❌ Invalid metadata entry")
-            continue
-
-        size_bytes = meta.get("size_bytes", 0)
-        size_mb = round(size_bytes / (1024 * 1024), 1) if size_bytes else 0
-        full_path = meta.get("full_path", "Unknown path")
-        width = meta.get("width", "?")
-        height = meta.get("height", "?")
-
-        extra_info = ""
-        if mode == "edit":
-            files_api_info = meta.get("files_api") or {}
-            if files_api_info.get("name"):
-                extra_info += f" • 🌐 Files API: {files_api_info['name']}"
-            if meta.get("parent_file_id"):
-                extra_info += f" • 👨‍👩‍👧 Parent: {meta.get('parent_file_id')}"
-
-        lines.append(f"  {i}. `{full_path}`\n     📏 {width}x{height} • 💾 {size_mb}MB{extra_info}")
-
-    lines.append("\n🖼️ **Thumbnail previews shown below** (actual images saved to disk)")
-    return "\n".join(lines)
-
-
-def _build_structured_content(
-    mode: str,
-    metadata: list[dict],
-    model_info: dict,
-    selected_tier: ModelTier,
-    tier: ModelTier,
-    model_tier: str | None,
-    thinking_level: str | None,
-    resolution: str | None,
-    enable_grounding: bool,
-    n: int,
-    thumbnail_count: int,
-    negative_prompt: str | None,
-    input_paths: list[str] | None,
-    file_id: str | None,
-    aspect_ratio: str | None,
-    prompt: str,
-) -> dict:
-    """Build structured content for response.
-
-    Returns:
-        Structured content dictionary
-    """
-    return {
-        "mode": mode,
-        "model_tier": selected_tier.value,
-        "model_name": model_info["name"],
-        "model_id": model_info["model_id"],
-        "requested_tier": model_tier,
-        "auto_selected": tier == ModelTier.AUTO,
-        "thinking_level": thinking_level if selected_tier == ModelTier.PRO else None,
-        "resolution": resolution,
-        "grounding_enabled": enable_grounding if selected_tier == ModelTier.PRO else False,
-        "requested": n,
-        "returned": thumbnail_count,
-        "negative_prompt_applied": bool(negative_prompt),
-        "used_input_images": bool(input_paths) or bool(file_id),
-        "input_image_paths": input_paths or [],
-        "input_image_count": len(input_paths) if input_paths else (1 if file_id else 0),
-        "aspect_ratio": aspect_ratio,
-        "source_file_id": file_id,
-        "edit_instruction": prompt if mode == "edit" else None,
-        "generation_prompt": prompt if mode == "generate" else None,
-        "output_method": "file_system_with_files_api",
-        "workflow": f"workflows.md_{mode}_sequence",
-        "images": metadata,
-        "file_paths": [
-            m.get("full_path") for m in metadata if m and isinstance(m, dict) and m.get("full_path")
-        ],
-        "files_api_ids": [
-            m.get("files_api", {}).get("name")
-            for m in metadata
-            if m
-            and isinstance(m, dict)
-            and m.get("files_api", {})
-            and m.get("files_api", {}).get("name")
-        ],
-        "parent_relationships": [
-            (m.get("parent_file_id"), m.get("files_api", {}).get("name"))
-            for m in metadata
-            if m and isinstance(m, dict)
-        ]
-        if mode == "edit"
-        else [],
-        "total_size_mb": round(
-            sum(m.get("size_bytes", 0) for m in metadata if m and isinstance(m, dict))
-            / (1024 * 1024),
-            2,
-        ),
-    }
-
-
-def _build_error_response(mode: str, prompt: str) -> ToolResult:
-    """Build error response when no valid results.
-
-    Args:
-        mode: Operation mode
-        prompt: Original prompt
-
-    Returns:
-        ToolResult with error information
-    """
-    summary = f"❌ Failed to {mode} image(s): {prompt[:50]}... No valid results returned."
-    return ToolResult(
-        content=[TextContent(type="text", text=summary)],
-        structured_content={
-            "error": "no_valid_metadata",
-            "message": summary,
-            "mode": mode,
-        },
-    )
+# 公开 API（按字母排序）
+__all__ = [
+    "_build_error_response",
+    "_build_structured_content",
+    "_build_summary",
+    "_collect_input_paths",
+    "_detect_mode",
+    "_load_input_images",
+    "_select_model",
+    "_validate_inputs",
+    "register_generate_image_tool",
+]
