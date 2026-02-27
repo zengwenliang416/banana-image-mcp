@@ -47,6 +47,7 @@ Thumbs.db
 # Project specific
 output/
 temp_images/
+backups/
 *.log
 *.db
 
