@@ -11,16 +11,15 @@ from datetime import datetime
 import hashlib
 from io import BytesIO
 import logging
-import mimetypes
 import os
 from typing import Any
 
 from fastmcp.utilities.types import Image as MCPImage
 from PIL import Image as PILImage
 
-from ..config.constants import TEMP_FILE_SUFFIX, THUMBNAIL_SIZE
+from ..config.constants import MAX_INPUT_IMAGE_SIZE_BYTES, TEMP_FILE_SUFFIX, THUMBNAIL_SIZE
 from ..config.settings import GeminiConfig
-from ..utils.image_utils import create_thumbnail, validate_image_format
+from ..utils.image_utils import create_thumbnail
 from .files_api_service import FilesAPIService
 from .gemini_client import GeminiClient
 from .image_database_service import ImageDatabaseService
@@ -248,22 +247,19 @@ class EnhancedImageService:
                 f"Editing image from path: {file_path}, instruction: '{instruction[:50]}...'"
             )
 
-            # Validate file exists and is readable
-            if not os.path.exists(file_path):
-                raise ValueError(f"Image file not found: {file_path}")
+            # 安全验证：路径白名单 + PIL 真实格式检测 + 大小限制
+            from ..core.validation import validate_local_image_path
 
-            # Read image file as bytes
-            with open(file_path, "rb") as f:
+            validated = validate_local_image_path(
+                file_path, max_size_bytes=MAX_INPUT_IMAGE_SIZE_BYTES
+            )
+
+            # Read image file as bytes (使用已验证的路径)
+            with open(validated.path, "rb") as f:
                 image_bytes = f.read()
 
-            # Detect MIME type from file extension or content
-            mime_type, _ = mimetypes.guess_type(file_path)
-            if not mime_type or not mime_type.startswith("image/"):
-                # Fallback to PNG if detection fails
-                mime_type = "image/png"
-
-            # Validate image format
-            validate_image_format(mime_type)
+            # 使用 PIL 检测的真实 MIME 类型（防止 MIME 伪装攻击）
+            mime_type = validated.mime_type
 
             # Convert to base64 for Gemini API (only internally, not in tool interface)
             base_image_b64 = base64.b64encode(image_bytes).decode("utf-8")

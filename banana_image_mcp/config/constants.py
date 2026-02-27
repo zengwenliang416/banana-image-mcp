@@ -10,6 +10,7 @@ ASPECT_RATIOS = ["Square image", "Portrait", "Landscape", "16:9", "4:3"]
 THUMBNAIL_SIZE = 256
 TEMP_FILE_SUFFIX = ".tmp"
 MAX_INPUT_IMAGES = 3
+MAX_INPUT_IMAGE_SIZE_BYTES = 20 * 1024 * 1024  # 20MB - Gemini API 限制
 
 # Image processing defaults
 DEFAULT_IMAGE_FORMAT = "png"

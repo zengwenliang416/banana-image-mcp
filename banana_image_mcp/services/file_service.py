@@ -26,13 +26,15 @@ class FileService:
             Dictionary with file metadata
         """
         try:
-            # Validate file path
-            validate_file_path(file_path)
+            # Validate file path and get normalized path (handles ~, symlinks, whitelist)
+            validated_path = validate_file_path(file_path)
+            # 使用规范化后的路径（Python 的 open/os.path.getsize 不会展开 ~）
+            normalized_path = str(validated_path)
 
-            self.logger.info(f"Uploading file: {file_path}")
+            self.logger.info(f"Uploading file: {file_path} -> {normalized_path}")
 
-            # Check file size
-            file_size = os.path.getsize(file_path)
+            # Check file size (使用规范化路径)
+            file_size = os.path.getsize(normalized_path)
             max_size = 100 * 1024 * 1024  # 100MB limit for Files API
 
             if file_size > max_size:
@@ -40,8 +42,8 @@ class FileService:
                     f"File size ({file_size} bytes) exceeds maximum ({max_size} bytes)"
                 )
 
-            # Upload file
-            file_obj = self.gemini_client.upload_file(file_path, display_name)
+            # Upload file (使用规范化路径)
+            file_obj = self.gemini_client.upload_file(normalized_path, display_name)
 
             # Extract metadata
             metadata = {
@@ -49,8 +51,9 @@ class FileService:
                 "name": file_obj.name,
                 "mime_type": getattr(file_obj, "mime_type", None),
                 "size_bytes": getattr(file_obj, "size_bytes", file_size),
-                "display_name": display_name or os.path.basename(file_path),
-                "original_path": file_path,
+                "display_name": display_name or os.path.basename(normalized_path),
+                "original_path": file_path,  # 保留用户原始输入用于日志/调试
+                "normalized_path": normalized_path,  # 实际使用的路径
             }
 
             self.logger.info(f"Successfully uploaded file: {file_obj.name}")
