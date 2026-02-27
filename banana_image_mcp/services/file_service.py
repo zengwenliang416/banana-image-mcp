@@ -28,7 +28,7 @@ class FileService:
         try:
             # Validate file path and get normalized path (handles ~, symlinks, whitelist)
             validated_path = validate_file_path(file_path)
-            # 使用规范化后的路径（Python 的 open/os.path.getsize 不会展开 ~）
+            # 使用规范化后的路径(Python 的 open/os.path.getsize 不会展开 ~)
             normalized_path = str(validated_path)
 
             self.logger.info(f"Uploading file: {file_path} -> {normalized_path}")

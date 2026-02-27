@@ -1,9 +1,9 @@
-"""输入处理模块 - 负责 generate_image 工具的输入收集、验证和加载。
+"""输入处理模块 - 负责 generate_image 工具的输入收集、验证和加载.
 
-职责：
+职责:
 1. 收集输入图片路径
-2. 验证输入参数（模式、路径、file_id）
-3. 安全加载图片文件（含 PIL 格式检测）
+2. 验证输入参数(模式、路径、file_id)
+3. 安全加载图片文件(含 PIL 格式检测)
 """
 
 import base64
@@ -19,7 +19,7 @@ def collect_input_paths(
     path2: str | None,
     path3: str | None,
 ) -> list[str] | None:
-    """收集非空的输入图片路径。
+    """收集非空的输入图片路径.
 
     Args:
         path1: 第一个可选路径
@@ -27,7 +27,7 @@ def collect_input_paths(
         path3: 第三个可选路径
 
     Returns:
-        非空路径列表，如果全为空则返回 None
+        非空路径列表,如果全为空则返回 None
     """
     paths = [p for p in [path1, path2, path3] if p]
     return paths if paths else None
@@ -38,7 +38,7 @@ def validate_inputs(
     input_paths: list[str] | None,
     file_id: str | None,
 ) -> None:
-    """验证输入参数。
+    """验证输入参数.
 
     Args:
         mode: 操作模式
@@ -68,7 +68,7 @@ def validate_inputs(
             )
 
         for i, path in enumerate(input_paths):
-            # 展开 ~ 路径（os.path.exists 不会自动展开）
+            # 展开 ~ 路径(os.path.exists 不会自动展开)
             expanded_path = Path(path).expanduser()
             if not expanded_path.exists():
                 raise ValidationError(
@@ -91,17 +91,17 @@ def load_input_images(
     logger: logging.Logger,
     max_size_bytes: int | None = None,
 ) -> list[tuple[str, str]]:
-    """安全加载输入图片文件。
+    """安全加载输入图片文件.
 
-    安全特性：
-    1. 路径白名单校验（防止目录遍历和 symlink 逃逸）
-    2. PIL 真实图片格式检测（防止 MIME 伪装攻击）
+    安全特性:
+    1. 路径白名单校验(防止目录遍历和 symlink 逃逸)
+    2. PIL 真实图片格式检测(防止 MIME 伪装攻击)
     3. 可选的文件大小限制
 
     Args:
         paths: 文件路径列表
         logger: 日志实例
-        max_size_bytes: 最大文件大小（字节），None 表示不限制
+        max_size_bytes: 最大文件大小(字节),None 表示不限制
 
     Returns:
         (base64_data, mime_type) 元组列表
@@ -114,10 +114,10 @@ def load_input_images(
     images = []
     for path in paths:
         try:
-            # 使用安全验证函数，返回路径 + MIME 类型 + 大小
+            # 使用安全验证函数,返回路径 + MIME 类型 + 大小
             validated = validate_local_image_path(path, max_size_bytes=max_size_bytes)
 
-            # 读取文件内容并编码（使用已验证的路径）
+            # 读取文件内容并编码(使用已验证的路径)
             with open(validated.path, "rb") as f:
                 image_bytes = f.read()
 
@@ -125,8 +125,7 @@ def load_input_images(
             images.append((base64_data, validated.mime_type))
 
             logger.debug(
-                f"Loaded input image: {path} "
-                f"({validated.mime_type}, {validated.size_bytes} bytes)"
+                f"Loaded input image: {path} ({validated.mime_type}, {validated.size_bytes} bytes)"
             )
 
         except ValidationError:
@@ -143,7 +142,7 @@ def load_input_images(
     return images
 
 
-# 向后兼容的私有函数别名（供 generate_image.py 内部使用）
+# 向后兼容的私有函数别名(供 generate_image.py 内部使用)
 _collect_input_paths = collect_input_paths
 _validate_inputs = validate_inputs
 _load_input_images = load_input_images

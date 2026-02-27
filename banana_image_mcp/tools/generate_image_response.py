@@ -1,8 +1,8 @@
-"""响应构建模块 - 负责 generate_image 工具的响应格式化和组装。
+"""响应构建模块 - 负责 generate_image 工具的响应格式化和组装.
 
-职责：
+职责:
 1. 构建人类可读的摘要文本
-2. 构建结构化内容（供程序化访问）
+2. 构建结构化内容(供程序化访问)
 3. 构建错误响应
 """
 
@@ -24,7 +24,7 @@ def build_summary(
     input_paths: list[str] | None,
     aspect_ratio: str | None,
 ) -> str:
-    """构建响应摘要文本。
+    """构建响应摘要文本.
 
     Args:
         mode: 操作模式
@@ -34,7 +34,7 @@ def build_summary(
         thinking_level: 使用的思考深度
         resolution: 使用的分辨率
         enable_grounding: 是否启用了 grounding
-        file_id: 源文件 ID（编辑模式）
+        file_id: 源文件 ID(编辑模式)
         input_paths: 输入图片路径
         aspect_ratio: 使用的宽高比
 
@@ -118,7 +118,7 @@ def build_structured_content(
     aspect_ratio: str | None,
     prompt: str,
 ) -> dict:
-    """构建结构化内容字典。
+    """构建结构化内容字典.
 
     Args:
         mode: 操作模式
@@ -193,7 +193,7 @@ def build_structured_content(
 
 
 def build_error_response(mode: str, prompt: str) -> ToolResult:
-    """构建无有效结果时的错误响应。
+    """构建无有效结果时的错误响应.
 
     Args:
         mode: 操作模式

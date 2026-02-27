@@ -247,7 +247,7 @@ class EnhancedImageService:
                 f"Editing image from path: {file_path}, instruction: '{instruction[:50]}...'"
             )
 
-            # 安全验证：路径白名单 + PIL 真实格式检测 + 大小限制
+            # 安全验证:路径白名单 + PIL 真实格式检测 + 大小限制
             from ..core.validation import validate_local_image_path
 
             validated = validate_local_image_path(
@@ -258,7 +258,7 @@ class EnhancedImageService:
             with open(validated.path, "rb") as f:
                 image_bytes = f.read()
 
-            # 使用 PIL 检测的真实 MIME 类型（防止 MIME 伪装攻击）
+            # 使用 PIL 检测的真实 MIME 类型(防止 MIME 伪装攻击)
             mime_type = validated.mime_type
 
             # Convert to base64 for Gemini API (only internally, not in tool interface)

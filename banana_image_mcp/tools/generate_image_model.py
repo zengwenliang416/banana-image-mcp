@@ -1,6 +1,6 @@
-"""模型选择模块 - 负责 generate_image 工具的模型智能路由。
+"""模型选择模块 - 负责 generate_image 工具的模型智能路由.
 
-职责：
+职责:
 1. 解析模型层级参数
 2. 调用 ModelSelector 进行智能选择
 3. 返回选定的服务、层级和模型信息
@@ -22,9 +22,9 @@ def select_model(
     input_paths: list[str] | None,
     logger: logging.Logger,
 ) -> tuple[Any, ModelTier, dict]:
-    """根据参数选择合适的模型。
+    """根据参数选择合适的模型.
 
-    智能选择逻辑委托给 ModelSelector 服务，基于：
+    智能选择逻辑委托给 ModelSelector 服务,基于:
     - 请求的模型层级
     - 分辨率需求
     - 是否启用 grounding

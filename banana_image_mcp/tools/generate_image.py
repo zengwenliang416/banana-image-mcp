@@ -1,10 +1,10 @@
-"""generate_image 工具 - MCP 图像生成与编辑的主入口。
+"""generate_image 工具 - MCP 图像生成与编辑的主入口.
 
-该模块是 generate_image 工具的主入口，负责：
+该模块是 generate_image 工具的主入口,负责:
 1. 注册 FastMCP 工具
 2. 协调各子模块完成图像生成/编辑流程
 
-子模块职责：
+子模块职责:
 - generate_image_inputs: 输入收集、验证、加载
 - generate_image_mode: 操作模式自动检测
 - generate_image_model: 模型智能选择
@@ -174,10 +174,10 @@ def register_generate_image_tool(server: FastMCP):
                 thinking_level = "high"
 
             # 5. 选择模型
-            # 注意：select_model 返回的 service 被丢弃，因为 EnhancedImageService 是唯一
-            # 实现完整 workflow.md 流程的服务（Files API 上传、数据库记录、缩略图生成）。
-            # EnhancedImageService 内部始终使用 Pro gemini_client。
-            # 此处调用 select_model 仅为获取 model_info 用于报告。
+            # 注意:select_model 返回的 service 被丢弃,因为 EnhancedImageService 是唯一
+            # 实现完整 workflow.md 流程的服务(Files API 上传、数据库记录、缩略图生成).
+            # EnhancedImageService 内部始终使用 Pro gemini_client.
+            # 此处调用 select_model 仅为获取 model_info 用于报告.
             _selected_service, selected_tier, model_info = select_model(
                 prompt=prompt,
                 model_tier=model_tier,
@@ -189,7 +189,7 @@ def register_generate_image_tool(server: FastMCP):
                 logger=logger,
             )
 
-            # 如果用户请求 Flash 但实际使用 Pro，记录警告
+            # 如果用户请求 Flash 但实际使用 Pro,记录警告
             if selected_tier == ModelTier.FLASH:
                 logger.warning(
                     "Flash model requested but EnhancedImageService uses Pro model. "
@@ -213,7 +213,7 @@ def register_generate_image_tool(server: FastMCP):
                     raise ValidationError(
                         "Edit mode with file_id supports only additional input images, not multiple primary inputs"
                     )
-                # 编辑模式只支持单张输入图片（无 file_id 时）
+                # 编辑模式只支持单张输入图片(无 file_id 时)
                 if not file_id and input_image_paths and len(input_image_paths) > 1:
                     raise ValidationError(
                         f"Edit mode supports only 1 input image, got {len(input_image_paths)}. "
@@ -227,7 +227,7 @@ def register_generate_image_tool(server: FastMCP):
             if detected_mode == "edit" and file_id:
                 # 通过 file_id 编辑
                 logger.info(f"Edit mode: using file_id {file_id}")
-                # 警告：file_id 模式下 input_image_paths 会被忽略
+                # 警告:file_id 模式下 input_image_paths 会被忽略
                 if input_image_paths:
                     logger.warning(
                         f"file_id provided, input_image_paths ({input_image_paths}) will be ignored. "
@@ -245,7 +245,7 @@ def register_generate_image_tool(server: FastMCP):
                 )
 
             else:
-                # 生成模式（可选择性使用输入图片进行条件生成）
+                # 生成模式(可选择性使用输入图片进行条件生成)
                 logger.info("Generate mode: creating new images")
                 if aspect_ratio:
                     logger.info(f"Using aspect ratio override: {aspect_ratio}")
@@ -333,14 +333,14 @@ def register_generate_image_tool(server: FastMCP):
 
 
 def _get_enhanced_image_service():
-    """获取增强图像服务实例。"""
+    """获取增强图像服务实例."""
     from ..services import get_enhanced_image_service
 
     return get_enhanced_image_service()
 
 
 # ============================================================================
-# 向后兼容的重导出（供测试和外部代码使用）
+# 向后兼容的重导出(供测试和外部代码使用)
 # ============================================================================
 
 # 从子模块重导出私有函数别名
@@ -357,7 +357,7 @@ from .generate_image_response import (  # noqa: E402
     _build_summary,
 )
 
-# 公开 API（按字母排序）
+# 公开 API(按字母排序)
 __all__ = [
     "_build_error_response",
     "_build_structured_content",
